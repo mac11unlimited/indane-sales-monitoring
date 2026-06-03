@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>INDANE SALES MONITORING - Local</title>
+    <style>
+      :root { --orange:#ff6600; --blue:#003399; --line:#cbd5e1; --bg:#f5f7fb; }
+      * { box-sizing: border-box; }
+      body { margin:0; font-family:Segoe UI, Arial, sans-serif; background:var(--bg); color:#0f172a; }
+      header { background:linear-gradient(90deg, rgba(0,51,153,.94), rgba(0,51,153,.55)), url("static/assets/iocl-hero.png"); background-size:cover; background-position:center; color:white; padding:28px; border-bottom:5px solid var(--orange); }
+      h1 { margin:0; font-size:42px; letter-spacing:.02em; }
+      h2 { color:var(--blue); margin:0 0 12px; }
+      .wrap { max-width:1280px; margin:auto; padding:18px; }
+      .card { background:white; border:1px solid #e2e8f0; border-radius:8px; padding:16px; box-shadow:0 10px 28px rgba(15,23,42,.08); }
+      .grid { display:grid; gap:14px; }
+      .cols { grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); }
+      input, select, textarea { width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:6px; font:inherit; }
+      button { border:0; border-radius:6px; padding:10px 13px; font-weight:800; cursor:pointer; background:var(--blue); color:white; }
+      button.orange { background:var(--orange); }
+      button.light { background:white; color:var(--blue); border:1px solid #94a3b8; }
+      .tabs { display:flex; gap:8px; flex-wrap:wrap; margin:16px 0; }
+      .tabs button.active { background:var(--orange); }
+      table { border-collapse:collapse; width:100%; font-size:13px; }
+      th, td { border:1px solid var(--line); padding:7px; vertical-align:middle; }
+      th { background:#eaf1fb; position:sticky; top:0; z-index:1; cursor:pointer; }
+      .scroll { max-height:520px; overflow:auto; }
+      .kpi { border-left:5px solid var(--orange); }
+      .kpi b { display:block; font-size:28px; margin-top:4px; }
+      .alert { background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; padding:10px; border-radius:6px; font-weight:800; margin-bottom:8px; }
+      .ok { background:#dcfce7; color:#166534; border-color:#86efac; }
+      .hide { display:none !important; }
+      .bar { height:22px; background:#dbeafe; border-radius:4px; overflow:hidden; }
+      .bar span { display:block; height:100%; background:var(--orange); }
+      .login { max-width:420px; margin-top:18px; }
+      .muted { color:#64748b; font-size:13px; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>INDANE SALES MONITORING</h1>
+      <p>UPSO-II SPD planning, plant execution, indent exception monitoring and live reporting</p>
+      <div id="loginBox" class="card login">
+        <h2>Login</h2>
+        <div class="grid">
+          <input id="loginUser" placeholder="User ID" value="admin" />
+          <input id="loginPass" placeholder="Password" type="password" value="Indane@12345" />
+          <button class="orange" onclick="login()">Sign In</button>
+          <input id="resetEmail" placeholder="Corporate email for password reset" />
+          <button class="light" onclick="notice('Password reset request recorded for email/SMS setup.')">Forgot Password</button>
+          <p class="muted">Users: admin, upso2, ido_noida, ido_dehradun, plant_loni, plant_aligarh, plant_haridwar, plant_kashipur, plant_karnal, lsa_01</p>
+        </div>
+      </div>
+    </header>
+
+    <main id="app" class="wrap hide">
+      <div id="alerts"></div>
+      <div class="card">
+        <b id="who"></b>
+        <button class="light" onclick="logout()" style="float:right">Logout</button>
+        <div class="tabs">
+          <button onclick="screen('dashboard')" class="active">Dashboard</button>
+          <button onclick="screen('planning')">SPD Planning</button>
+          <button onclick="screen('execution')">Plant Execution</button>
+          <button onclick="screen('reports')">Reports</button>
+          <button onclick="screen('profile')">Users & Profile</button>
+        </div>
+      </div>
+
+      <section id="dashboard" class="grid cols">
+        <div class="card kpi">Total Distributors <b id="kpiDist"></b></div>
+        <div class="card kpi">Today SPD Loads <b id="kpiSpd"></b></div>
+        <div class="card kpi">Loads Invoiced <b id="kpiInv"></b></div>
+        <div class="card kpi">Indent Issues <b id="kpiIssues"></b></div>
+        <div class="card" style="grid-column:1/-1">
+          <h2>Daily SPD Planned vs Invoiced by Plant</h2>
+          <div id="plantBars"></div>
+        </div>
+      </section>
+
+      <section id="planning" class="grid hide">
+        <div class="card">
+          <h2>Daily SPD Approval</h2>
+          <div class="grid cols">
+            <input id="spdDate" type="date" />
+            <select id="spdSap"></select>
+            <input id="spdLoads" type="number" min="0" placeholder="SPD loads" value="1" />
+            <select id="spdPriority"><option>Normal</option><option>Medium</option><option>High</option></select>
+            <input id="spdBacklog" type="number" min="0" placeholder="Backlog cylinders" value="0" />
+            <input id="spdIndent" placeholder="Indent no. if available" />
+            <input id="spdReason" placeholder="Override / field demand reason" />
+          </div>
+          <p><button class="orange" onclick="approveSpd()">Approve SPD</button></p>
+          <p class="muted">IDO/LSA users allocate SPD in 360-cylinder truck loads. Plant users can invoice only these approved SPD rows.</p>
+        </div>
+        <div class="card">
+          <h2>Distributor Maintenance</h2>
+          <div class="grid cols">
+            <input id="dSap" placeholder="SAP Code" />
+            <input id="dName" placeholder="Distributor Name" />
+            <input id="dLsa" placeholder="LSA" />
+            <input id="dDistrict" placeholder="District" />
+            <input id="dPlant" placeholder="Supply Plant" />
+            <input id="dEmail" placeholder="Email" />
+            <input id="dMobile" placeholder="Mobile" />
+          </div>
+          <p><button onclick="saveDistributor()">Save Distributor</button></p>
+        </div>
+      </section>
+
+      <section id="execution" class="card hide">
+        <h2>Plant Execution Grid</h2>
+        <div class="grid cols">
+          <input id="filter" placeholder="Filter any column" oninput="renderExecution()" />
+          <input id="execDate" type="date" onchange="renderExecution()" />
+          <label>Column width <input id="colWidth" type="range" min="110" max="320" value="170" oninput="renderExecution()" /></label>
+          <button onclick="downloadCsv()">Download Day Report</button>
+        </div>
+        <div class="scroll"><table id="execTable"></table></div>
+      </section>
+
+      <section id="reports" class="grid cols hide">
+        <div class="card">
+          <h2>Upload MCSI / SAP Reports</h2>
+          <input type="file" />
+          <p><button onclick="notice('Upload accepted in local mode. Public portal will persist parsed Excel rows to PostgreSQL.')">Upload MCSI</button></p>
+        </div>
+        <div class="card">
+          <h2>Monthly Cumulative Visual</h2>
+          <table><tr><th>Month</th><th>LY MT</th><th>Target MT</th><th>CY Actual MT</th></tr><tr><td>Apr</td><td>77187</td><td>81046</td><td>68260</td></tr><tr><td>May</td><td>68260</td><td>71673</td><td>51220</td></tr></table>
+        </div>
+      </section>
+
+      <section id="profile" class="grid cols hide">
+        <div class="card">
+          <h2>My Profile</h2>
+          <input id="pEmail" placeholder="Email" />
+          <input id="pMobile" placeholder="Mobile" />
+          <input id="pWork" placeholder="Work profile" />
+          <p><button onclick="saveProfile()">Update Profile</button></p>
+        </div>
+        <div class="card">
+          <h2>User Matrix</h2>
+          <div class="scroll"><table id="userTable"></table></div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const today = new Date().toISOString().slice(0, 10);
+      const users = {
+        admin:{role:"ADMIN",email:"admin@indianoil.in",work:"All rights"}, upso2:{role:"UPSO_II",email:"upso2@indianoil.in",work:"UPSO-II target control"},
+        ido_noida:{role:"IDO_NOIDA",email:"ido.noida@indianoil.in",work:"Noida IDO SPD"}, ido_dehradun:{role:"IDO_DEHRADUN",email:"ido.dehradun@indianoil.in",work:"Dehradun IDO SPD"},
+        plant_loni:{role:"PLANT_LONI",email:"loni.bp@indianoil.in",work:"Loni execution"}, plant_aligarh:{role:"PLANT_ALIGARH",email:"aligarh.bp@indianoil.in",work:"Aligarh execution"},
+        plant_haridwar:{role:"PLANT_HARIDWAR",email:"haridwar.bp@indianoil.in",work:"Haridwar execution"}, plant_kashipur:{role:"PLANT_KASHIPUR",email:"kashipur.bp@indianoil.in",work:"Kashipur execution"},
+        plant_karnal:{role:"PLANT_KARNAL",email:"karnal.bp@indianoil.in",work:"Karnal execution"}, lsa_01:{role:"LSA_USER",lsa:"Baghpat LPG SA",email:"lsa_01@indianoil.in",work:"LSA SPD coordination"}
+      };
+      const distributors = [
+        ["175271","AARYAMAN INDANE GAS AGENCY","Baghpat LPG SA","BAGHPAT","Loni BP",1],["156162","AMAR INDANE GAS AGENCY","Baghpat LPG SA","BAGHPAT","Loni BP",2],
+        ["153957","BARAUT GAS SERVICE","Baghpat LPG SA","BAGHPAT","Loni BP",2],["103860","Bhawan Indane Gas Service","Baghpat LPG SA","SHAMLI","Karnal BP",2],
+        ["221510","ALIGARH INDANE AGENCY","Aligarh LSA","ALIGARH","Aligarh BP",2],["204118","DEHRADUN INDANE SERVICE","Dehradun LSA","DEHRADUN","Haridwar BP",1],
+        ["309441","KASHIPUR INDANE GRAMIN","Kashipur LSA","UDHAM SINGH NAGAR","Kashipur BP",1]
+      ].map(x=>({sap:x[0],name:x[1],lsa:x[2],district:x[3],plant:x[4],loads:x[5]}));
+      const spd = distributors.map(d=>({date:today,sap:d.sap,loads:d.loads,cyl:d.loads*360,priority:d.loads>1?"High":"Normal",backlog:d.loads*120,indent:""}));
+      const exec = {};
+      let currentUser = null;
+      spdDate.value = execDate.value = today;
+
+      function login(){ const u=loginUser.value.trim(); if(!users[u] || loginPass.value!=="Indane@12345") return alert("Invalid login"); currentUser={id:u,...users[u]}; loginBox.classList.add("hide"); app.classList.remove("hide"); who.textContent=`${u} / ${currentUser.role}`; pEmail.value=currentUser.email; pWork.value=currentUser.work; fillSelects(); renderAll(); }
+      function logout(){ location.reload(); }
+      function notice(t){ alert(t); }
+      function screen(id){ document.querySelectorAll("main section").forEach(s=>s.classList.add("hide")); document.getElementById(id).classList.remove("hide"); document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active")); event.target.classList.add("active"); renderAll(); }
+      function canSee(d){ if(!currentUser) return false; const r=currentUser.role; if(r==="ADMIN"||r==="UPSO_II") return true; if(r==="LSA_USER") return d.lsa===currentUser.lsa; if(r.includes("LONI")) return d.plant==="Loni BP"; if(r.includes("ALIGARH")) return d.plant==="Aligarh BP"; if(r.includes("HARIDWAR")) return d.plant==="Haridwar BP"; if(r.includes("KASHIPUR")) return d.plant==="Kashipur BP"; if(r.includes("KARNAL")) return d.plant==="Karnal BP"; if(r==="IDO_DEHRADUN") return /Dehradun|Haridwar|Kashipur/i.test(d.lsa+d.plant); if(r==="IDO_NOIDA") return !/Dehradun|Haridwar|Kashipur/i.test(d.lsa+d.plant); return false; }
+      function fillSelects(){ spdSap.innerHTML = distributors.filter(canSee).map(d=>`<option value="${d.sap}">${d.sap} - ${d.name} (${d.plant})</option>`).join(""); }
+      function rows(){ return spd.map(s=>({...s,d:distributors.find(d=>d.sap===s.sap),e:exec[s.date+":"+s.sap]||{}})).filter(r=>r.d&&canSee(r.d)); }
+      function renderAll(){ renderDashboard(); renderExecution(); renderUsers(); }
+      function renderDashboard(){ const rs=rows(); kpiDist.textContent=distributors.filter(canSee).length; kpiSpd.textContent=rs.reduce((a,r)=>a+r.loads,0); kpiInv.textContent=rs.reduce((a,r)=>a+(+r.e.invoiced||0),0); kpiIssues.textContent=rs.filter(r=>r.e.indentAvailable===false).length; alerts.innerHTML=rs.filter(r=>r.e.indentAvailable===false).map(r=>`<div class="alert">${r.d.name}: SAP indent not available</div>`).join(""); const plants=[...new Set(rs.map(r=>r.d.plant))]; plantBars.innerHTML=plants.map(p=>{const pRows=rs.filter(r=>r.d.plant===p); const plan=pRows.reduce((a,r)=>a+r.loads,0); const inv=pRows.reduce((a,r)=>a+(+r.e.invoiced||0),0); return `<p><b>${p}</b> Planned ${plan}, Invoiced ${inv}</p><div class="bar"><span style="width:${plan?Math.min(100,inv/plan*100):0}%"></span></div>`}).join(""); }
+      function approveSpd(){ const d=distributors.find(x=>x.sap===spdSap.value); if(!d) return; const existing=spd.find(s=>s.date===spdDate.value&&s.sap===d.sap); const val={date:spdDate.value,sap:d.sap,loads:+spdLoads.value||0,cyl:(+spdLoads.value||0)*360,priority:spdPriority.value,backlog:+spdBacklog.value||0,indent:spdIndent.value}; if(existing) Object.assign(existing,val); else spd.push(val); notice("SPD approved for plant execution."); renderAll(); }
+      function saveDistributor(){ distributors.push({sap:dSap.value,name:dName.value,lsa:dLsa.value,district:dDistrict.value,plant:dPlant.value,loads:0,email:dEmail.value,mobile:dMobile.value}); fillSelects(); renderAll(); notice("Distributor saved."); }
+      function renderExecution(){ const term=(filter.value||"").toLowerCase(), w=colWidth.value; const rs=rows().filter(r=>r.date===execDate.value).filter(r=>JSON.stringify(r).toLowerCase().includes(term)); execTable.innerHTML=`<thead><tr><th>SAP</th><th>Distributor</th><th>LSA</th><th>Plant</th><th>SPD Loads</th><th>Indent No.</th><th>Invoiced Loads</th><th>SAP Indent Available</th><th>Fund Short</th><th>Other Issue</th><th>Save</th></tr></thead><tbody>${rs.map((r,i)=>`<tr><td>${r.sap}</td><td style="min-width:${w}px">${r.d.name}</td><td>${r.d.lsa}</td><td>${r.d.plant}</td><td><b>${r.loads}</b></td><td><input value="${r.e.indent||r.indent||""}" id="ind${i}"></td><td><input type="number" value="${r.e.invoiced||0}" id="inv${i}"></td><td><input type="checkbox" ${r.e.indentAvailable!==false?"checked":""} id="ia${i}"></td><td><input type="checkbox" ${r.e.fundShort?"checked":""} id="fs${i}"></td><td><input value="${r.e.issue||""}" id="is${i}"></td><td><button onclick="saveExec('${r.date}','${r.sap}',${i})">Save</button></td></tr>`).join("")}</tbody>`; }
+      function saveExec(date,sap,i){ exec[date+":"+sap]={indent:document.getElementById("ind"+i).value,invoiced:+document.getElementById("inv"+i).value||0,indentAvailable:document.getElementById("ia"+i).checked,fundShort:document.getElementById("fs"+i).checked,issue:document.getElementById("is"+i).value}; renderAll(); }
+      function renderUsers(){ userTable.innerHTML="<tr><th>User ID</th><th>Role</th><th>LSA</th><th>Email</th><th>Work Profile</th></tr>"+Object.entries(users).map(([u,v])=>`<tr><td><b>${u}</b></td><td>${v.role}</td><td>${v.lsa||""}</td><td>${v.email}</td><td>${v.work}</td></tr>`).join(""); }
+      function saveProfile(){ currentUser.email=pEmail.value; currentUser.mobile=pMobile.value; currentUser.work=pWork.value; notice("Profile updated."); }
+      function downloadCsv(){ const rs=rows().filter(r=>r.date===execDate.value); const csv=["Date,SAP,Distributor,LSA,Plant,SPD Loads,SPD Cylinders,Indent,Invoiced,Indent Available,Fund Short,Issue",...rs.map(r=>[r.date,r.sap,r.d.name,r.d.lsa,r.d.plant,r.loads,r.cyl,r.e.indent||r.indent||"",r.e.invoiced||0,r.e.indentAvailable!==false,r.e.fundShort||false,r.e.issue||""].map(v=>`"${String(v).replaceAll('"','""')}"`).join(","))].join("\n"); const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"})); a.download="indane-spd-report.csv"; a.click(); }
+    </script>
+  </body>
+</html>

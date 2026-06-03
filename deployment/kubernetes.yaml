@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: indane-lpg-secrets
+type: Opaque
+stringData:
+  DATABASE_URL: postgresql+asyncpg://indane:change-me@postgres:5432/indane_sales
+  SECRET_KEY: replace-with-a-long-random-secret-before-production
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: indane-lpg-portal
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: indane-lpg-portal
+  template:
+    metadata:
+      labels:
+        app: indane-lpg-portal
+    spec:
+      containers:
+        - name: portal
+          image: indane-lpg-portal:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8095
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: indane-lpg-secrets
+                  key: DATABASE_URL
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: indane-lpg-secrets
+                  key: SECRET_KEY
+            - name: PUBLIC_BASE_URL
+              value: https://lpg-gate.example.com
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8095
+            initialDelaySeconds: 10
+            periodSeconds: 15
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: indane-lpg-portal
+spec:
+  type: LoadBalancer
+  selector:
+    app: indane-lpg-portal
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8095

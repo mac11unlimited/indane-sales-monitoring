@@ -1,0 +1,9 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+*.log
+local-server.log
+local-server.err.log
+local-server.out.log
+.vercel/

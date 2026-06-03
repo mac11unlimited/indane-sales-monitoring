@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>INDANE SALES MONITORING</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <script src="/static/app.js"></script>
+  </head>
+  <body x-data="indaneApp()" x-init="init()" x-cloak>
+    <main class="min-h-screen">
+      <section class="brand-hero min-h-[250px] border-b-4 border-[#ff6600]">
+        <div class="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-7 text-white md:flex-row md:items-end md:justify-between">
+          <div>
+            <p class="text-sm font-bold uppercase tracking-[0.22em]">Indian Oil Corporation Limited - UPSO II</p>
+            <h1 class="mt-2 max-w-4xl text-4xl font-black leading-tight md:text-6xl">INDANE SALES MONITORING</h1>
+            <p class="mt-3 max-w-3xl text-lg font-semibold text-blue-50">SPD controlled LPG sales planning, plant execution, exception scanning, and BI monitoring.</p>
+          </div>
+          <div class="glass w-full max-w-sm rounded-md p-4 text-slate-900" x-show="!token">
+            <div class="grid gap-3">
+              <input class="rounded border border-slate-300 px-3 py-2" placeholder="User ID" x-model="username" />
+              <input class="rounded border border-slate-300 px-3 py-2" placeholder="Password" type="password" x-model="password" @keydown.enter="login()" />
+              <button class="btn btn-primary" @click="login()">Sign In</button>
+              <div class="grid grid-cols-[1fr_auto] gap-2">
+                <input class="rounded border border-slate-300 px-3 py-2 text-sm" placeholder="Corporate email for password reset" x-model="forgotEmail" />
+                <button class="btn btn-outline text-xs" @click="forgotPassword()">Reset</button>
+              </div>
+              <div class="rounded bg-blue-50 p-2 text-xs font-semibold text-[#003399]">
+                Demo users: admin, upso2, ido_noida, ido_dehradun, plant_loni, plant_aligarh, plant_haridwar, plant_kashipur, plant_karnal, lsa_01
+              </div>
+              <p class="text-sm font-semibold text-red-600" x-text="loginError"></p>
+              <p class="text-sm font-semibold text-[#003399]" x-text="notice"></p>
+            </div>
+          </div>
+          <div class="glass rounded-md p-4 text-slate-900" x-show="token">
+            <div class="text-sm font-bold text-slate-500">Signed in</div>
+            <div class="mt-1 text-lg font-black" x-text="username"></div>
+            <div class="text-sm text-[#003399]" x-text="role"></div>
+            <button class="btn btn-outline mt-3" @click="logout()">Logout</button>
+          </div>
+        </div>
+      </section>
+
+      <template x-if="token">
+        <section class="mx-auto max-w-7xl px-4 py-5">
+          <div class="mb-4 grid gap-3" x-show="alerts.length">
+            <template x-for="alert in alerts" :key="alert.id">
+              <div class="rounded-md border border-red-300 bg-red-50 px-4 py-3 text-sm font-bold text-red-800" x-text="alert.message"></div>
+            </template>
+          </div>
+
+          <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex gap-2">
+              <button class="btn" :class="activeScreen === 'strategic' ? 'btn-blue' : 'btn-outline'" @click="activeScreen='strategic'; $nextTick(() => drawCharts())">Strategic Trend Deck</button>
+              <button class="btn" :class="activeScreen === 'execution' ? 'btn-blue' : 'btn-outline'" @click="activeScreen='execution'; $nextTick(() => drawCharts())">Daily Execution Deck</button>
+              <button class="btn" :class="activeScreen === 'planning' ? 'btn-blue' : 'btn-outline'" @click="activeScreen='planning'">SPD Planning</button>
+              <button class="btn" :class="activeScreen === 'admin' ? 'btn-blue' : 'btn-outline'" @click="activeScreen='admin'">Users & Profile</button>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 text-sm">
+              <input id="mcsiUpload" type="file" class="max-w-[210px] rounded border bg-white p-2" />
+              <button class="btn btn-outline" @click="upload('/api/upload/mcsi-sales','mcsiUpload')">Upload MCSI</button>
+              <input id="indentUpload" type="file" class="max-w-[210px] rounded border bg-white p-2" />
+              <button class="btn btn-outline" @click="upload('/api/upload/indent-planning','indentUpload',{planning_date: today})">Upload Planning</button>
+              <button class="btn btn-outline" @click="downloadReport()">Download Day Report</button>
+            </div>
+          </div>
+          <p class="mb-3 text-sm font-bold text-[#003399]" x-text="notice"></p>
+
+          <div x-show="activeScreen === 'planning'" class="grid gap-4">
+            <div class="rounded-md bg-white p-4 shadow-sm" x-show="canPlan()">
+              <h2 class="mb-3 text-lg font-black text-[#003399]">Daily SPD Approval for Plant Execution</h2>
+              <div class="grid gap-3 md:grid-cols-4">
+                <input class="rounded border border-slate-300 px-3 py-2" type="date" x-model="newSpd.planning_date" />
+                <select class="rounded border border-slate-300 px-3 py-2" x-model="newSpd.sap_code">
+                  <template x-for="d in distributors" :key="d.sap_code">
+                    <option :value="d.sap_code" x-text="`${d.sap_code} - ${d.name} (${d.supply_plant})`"></option>
+                  </template>
+                </select>
+                <input class="rounded border border-slate-300 px-3 py-2" type="number" min="0" placeholder="SPD loads" x-model="newSpd.target_loads" />
+                <select class="rounded border border-slate-300 px-3 py-2" x-model="newSpd.priority_level">
+                  <option>Normal</option><option>Medium</option><option>High</option>
+                </select>
+                <input class="rounded border border-slate-300 px-3 py-2" type="number" min="0" placeholder="Backlog cylinders" x-model="newSpd.backlog_qty" />
+                <input class="rounded border border-slate-300 px-3 py-2" placeholder="Indent no. if available" x-model="newSpd.indent_no" />
+                <input class="rounded border border-slate-300 px-3 py-2 md:col-span-2" placeholder="Override / field demand reason" x-model="newSpd.override_reason" />
+              </div>
+              <div class="mt-3 flex flex-wrap gap-2">
+                <button class="btn btn-primary" @click="approveSpd()">Approve SPD</button>
+                <input id="backlogUpload" type="file" class="max-w-[210px] rounded border bg-white p-2" />
+                <button class="btn btn-outline" @click="upload('/api/upload/backlog','backlogUpload')">Upload Backlog</button>
+              </div>
+            </div>
+            <div class="rounded-md bg-white p-4 shadow-sm">
+              <h2 class="mb-3 text-lg font-black text-[#003399]">Distributor Maintenance</h2>
+              <div class="grid gap-3 md:grid-cols-4">
+                <input class="rounded border border-slate-300 px-3 py-2" placeholder="SAP Code" x-model="distributorForm.sap_code" />
+                <input class="rounded border border-slate-300 px-3 py-2" placeholder="Distributor Name" x-model="distributorForm.name" />
+                <input class="rounded border border-slate-300 px-3 py-2" placeholder="LSA" x-model="distributorForm.lsa_name" />
+                <input class="rounded border border-slate-300 px-3 py-2" placeholder="District" x-model="distributorForm.district" />
+                <input class="rounded border border-slate-300 px-3 py-2" placeholder="Urban/Rural" x-model="distributorForm.urban_rural" />
+                <input class="rounded border border-slate-300 px-3 py-2" placeholder="Supply Plant" x-model="distributorForm.supply_plant" />
+                <input class="rounded border border-slate-300 px-3 py-2" placeholder="Email" x-model="distributorForm.email" />
+                <input class="rounded border border-slate-300 px-3 py-2" placeholder="Mobile" x-model="distributorForm.phone_number" />
+              </div>
+              <div class="mt-3 flex flex-wrap gap-2">
+                <button class="btn btn-primary" @click="saveDistributor()">Save Distributor</button>
+                <input id="distUpload" type="file" class="max-w-[210px] rounded border bg-white p-2" />
+                <button class="btn btn-outline" @click="upload('/api/upload/distributors','distUpload')">Bulk Upload</button>
+              </div>
+            </div>
+          </div>
+
+          <div x-show="activeScreen === 'admin'" class="grid gap-4">
+            <div class="rounded-md bg-white p-4 shadow-sm">
+              <h2 class="mb-3 text-lg font-black text-[#003399]">My Profile</h2>
+              <div class="grid gap-3 md:grid-cols-3">
+                <input class="rounded border border-slate-300 px-3 py-2" placeholder="Email" x-model="profile.email" />
+                <input class="rounded border border-slate-300 px-3 py-2" placeholder="Mobile No." x-model="profile.phone_number" />
+                <input class="rounded border border-slate-300 px-3 py-2" placeholder="Work Profile" x-model="profile.work_profile" />
+              </div>
+              <button class="btn btn-primary mt-3" @click="saveProfile()">Update Profile</button>
+            </div>
+            <div class="rounded-md bg-white p-4 shadow-sm">
+              <h2 class="mb-3 text-lg font-black text-[#003399]">Role Login Matrix</h2>
+              <div class="max-h-[360px] overflow-auto">
+                <table class="tabular w-full text-sm">
+                  <thead><tr><th>User ID</th><th>Role</th><th>LSA</th><th>Email</th><th>Work Profile</th></tr></thead>
+                  <tbody>
+                    <template x-for="u in users" :key="u.username">
+                      <tr><td class="font-bold" x-text="u.username"></td><td x-text="u.role"></td><td x-text="u.lsa_name"></td><td x-text="u.email"></td><td x-text="u.work_profile"></td></tr>
+                    </template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div x-show="activeScreen === 'strategic'" class="grid gap-4">
+            <div class="grid gap-4 md:grid-cols-4">
+              <div class="kpi rounded-md bg-white p-4 shadow-sm">
+                <div class="text-sm font-bold text-slate-500">Cylinder Conversion</div>
+                <div class="mt-1 text-2xl font-black">360 / Load</div>
+              </div>
+              <div class="kpi rounded-md bg-white p-4 shadow-sm">
+                <div class="text-sm font-bold text-slate-500">MT per Load</div>
+                <div class="mt-1 text-2xl font-black">5.112</div>
+              </div>
+              <div class="kpi rounded-md bg-white p-4 shadow-sm">
+                <div class="text-sm font-bold text-slate-500">Working-Day Run Rate</div>
+                <div class="mt-1 text-2xl font-black">76%</div>
+              </div>
+              <div class="kpi rounded-md bg-white p-4 shadow-sm">
+                <div class="text-sm font-bold text-slate-500">Active Alerts</div>
+                <div class="mt-1 text-2xl font-black" x-text="alerts.length"></div>
+              </div>
+            </div>
+            <div class="grid gap-4 lg:grid-cols-[2fr_1fr]">
+              <div class="rounded-md bg-white p-4 shadow-sm">
+                <h2 class="mb-3 text-lg font-black text-[#003399]">Monthly Cumulative Trend</h2>
+                <div class="h-[330px]"><canvas id="trendChart"></canvas></div>
+              </div>
+              <div class="rounded-md bg-white p-4 shadow-sm">
+                <h2 class="mb-3 text-lg font-black text-[#003399]">Run-Rate Gauge</h2>
+                <div class="flex h-[260px] items-center justify-center">
+                  <div class="gauge"><div class="gauge-inner"><span>76%<br /><small class="font-bold text-slate-500">Projected</small></span></div></div>
+                </div>
+              </div>
+            </div>
+            <div class="grid gap-4 lg:grid-cols-2">
+              <div class="rounded-md bg-white p-4 shadow-sm">
+                <h2 class="mb-3 text-lg font-black text-[#003399]">LSA / Plant Heatmap</h2>
+                <div class="grid gap-2 sm:grid-cols-2">
+                  <template x-for="cell in dashboard?.heatmap || []" :key="cell.name">
+                    <div class="heat-cell" :style="`background:${cell.performance >= 105 ? '#15803d' : cell.performance >= 98 ? '#003399' : '#dc2626'}`">
+                      <div class="text-sm font-black" x-text="cell.name"></div>
+                      <div class="text-xs opacity-90" x-text="cell.plant"></div>
+                      <div class="mt-2 text-2xl font-black" x-text="cell.performance + '%'"></div>
+                    </div>
+                  </template>
+                </div>
+              </div>
+              <div class="rounded-md bg-white p-4 shadow-sm">
+                <h2 class="mb-3 text-lg font-black text-[#003399]">MT / Cylinder Matrix</h2>
+                <table class="tabular w-full text-sm">
+                  <thead><tr><th>Metric</th><th>MT</th><th>Cylinders</th><th>Loads</th></tr></thead>
+                  <tbody>
+                    <tr><td>Domestic cylinder</td><td>0.0142</td><td>1</td><td>0.0028</td></tr>
+                    <tr><td>Standard truck load</td><td>5.112</td><td>360</td><td>1</td></tr>
+                    <tr><td>Ceiling rule</td><td colspan="3">Always round up converted cylinder units</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div x-show="activeScreen === 'lpg'" class="grid gap-4">
+            <div class="grid gap-4 md:grid-cols-4">
+              <div class="kpi rounded-md bg-white p-4 shadow-sm">
+                <div class="text-sm font-bold text-slate-500">Trucks Inside</div>
+                <div class="mt-1 text-3xl font-black" x-text="lpgDashboard?.truck_kpis?.inside ?? 0"></div>
+              </div>
+              <div class="kpi rounded-md bg-white p-4 shadow-sm">
+                <div class="text-sm font-bold text-slate-500">Pending Gate Validation</div>
+                <div class="mt-1 text-3xl font-black" x-text="lpgDashboard?.truck_kpis?.pending ?? 0"></div>
+              </div>
+              <div class="kpi rounded-md bg-white p-4 shadow-sm">
+                <div class="text-sm font-bold text-slate-500">Mismatch Cases</div>
+                <div class="mt-1 text-3xl font-black text-red-700" x-text="lpgDashboard?.sap_kpis?.mismatch_cases ?? 0"></div>
+              </div>
+              <div class="kpi rounded-md bg-white p-4 shadow-sm">
+                <div class="text-sm font-bold text-slate-500">Manual ERV Pending</div>
+                <div class="mt-1 text-3xl font-black text-amber-700" x-text="lpgDashboard?.manual_erv?.pending ?? 0"></div>
+              </div>
+            </div>
+
+            <div class="grid gap-4 xl:grid-cols-[1.05fr_1fr]">
+              <div class="rounded-md bg-white p-4 shadow-sm">
+                <div class="mb-3 flex items-center justify-between gap-2">
+                  <h2 class="text-lg font-black text-[#003399]">Gate 0 / Gate 1 / Gate 2 Entry</h2>
+                  <button class="btn btn-primary text-sm" @click="createGateEntry()">Create Entry</button>
+                </div>
+                <div class="grid gap-3 md:grid-cols-3">
+                  <input class="field" placeholder="Truck number" x-model="gate.truck_number" />
+                  <input class="field" placeholder="Driver name" x-model="gate.driver_name" />
+                  <input class="field" placeholder="Driver mobile" x-model="gate.driver_mobile" />
+                  <input class="field" placeholder="Transporter" x-model="gate.transporter_name" />
+                  <input class="field" placeholder="RFID ID" x-model="gate.rfid_id" />
+                  <select class="field" x-model="gate.flow_type">
+                    <option value="FILLED_DISPATCH">Filled dispatch</option>
+                    <option value="EMPTY_RETURN">Empty return</option>
+                    <option value="REPAIR_TRANSFER">Repair / stock transfer</option>
+                  </select>
+                  <input class="field" placeholder="Distributor" x-model="gate.distributor_name" />
+                  <input class="field" placeholder="Distributor SAP code" x-model="gate.distributor_sap_code" />
+                  <input class="field" placeholder="Load slip no" x-model="gate.load_slip_no" />
+                  <input class="field" placeholder="Material route" x-model="gate.route" />
+                  <input class="field" placeholder="Destination" x-model="gate.destination" />
+                  <input class="field" type="number" placeholder="Expected qty" x-model="gate.expected_quantity" />
+                  <input class="field" type="number" placeholder="Physical qty" x-model="gate.physical_quantity" />
+                  <select class="field" x-model="gateAdvance.gate_no">
+                    <option>GATE1</option>
+                    <option>LOADING</option>
+                    <option>GATE2</option>
+                  </select>
+                  <button class="btn btn-outline" @click="advanceSelectedGate()">Advance Selected Truck</button>
+                </div>
+                <p class="mt-2 text-sm font-bold" :class="gateMessage.includes('RED') ? 'text-red-700' : 'text-green-700'" x-text="gateMessage"></p>
+              </div>
+
+              <div class="rounded-md bg-white p-4 shadow-sm">
+                <h2 class="mb-3 text-lg font-black text-[#003399]">OCR / QR Document Extraction</h2>
+                <div class="grid gap-3">
+                  <input id="docExtractUpload" type="file" class="field" />
+                  <button class="btn btn-outline" @click="extractDocument()">Extract Invoice / ERV / DC</button>
+                  <pre class="result-box" x-text="JSON.stringify(extractionResult, null, 2)"></pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid gap-4 xl:grid-cols-2">
+              <div class="rounded-md bg-white p-4 shadow-sm">
+                <div class="mb-3 flex items-center justify-between gap-2">
+                  <h2 class="text-lg font-black text-[#003399]">Manual ERV Exception</h2>
+                  <button class="btn btn-primary text-sm" @click="createManualErv()">Create Manual ERV</button>
+                </div>
+                <div class="grid gap-3 md:grid-cols-2">
+                  <input class="field" placeholder="Truck number" x-model="manualErv.truck_number" />
+                  <input class="field" placeholder="Distributor" x-model="manualErv.distributor_name" />
+                  <input class="field" placeholder="Distributor SAP code" x-model="manualErv.distributor_sap_code" />
+                  <select class="field" x-model="manualErv.document_type">
+                    <option>Manual ERV</option>
+                    <option>Distributor Letterhead</option>
+                    <option>Previous Invoice Endorsement</option>
+                    <option>Manual Receipt</option>
+                    <option>Other</option>
+                  </select>
+                  <input class="field" placeholder="Document number" x-model="manualErv.document_number" />
+                  <input class="field" placeholder="Remarks" x-model="manualErv.remarks" />
+                  <select class="field" x-model="manualErv.lines[0].material_code">
+                    <template x-for="m in materials" :key="m.material_code"><option :value="m.material_code" x-text="`${m.material_code} - ${m.cylinder_type}`"></option></template>
+                  </select>
+                  <input class="field" type="number" placeholder="Empty qty" x-model="manualErv.lines[0].empty_quantity" />
+                  <input class="field" type="number" placeholder="Safety cap qty" x-model="manualErv.lines[0].safety_cap_quantity" />
+                  <input class="field" type="number" placeholder="Damaged qty" x-model="manualErv.lines[0].damaged_quantity" />
+                </div>
+                <p class="mt-2 text-sm font-bold text-[#003399]" x-text="manualErvMessage"></p>
+              </div>
+
+              <div class="rounded-md bg-white p-4 shadow-sm">
+                <div class="mb-3 flex items-center justify-between gap-2">
+                  <h2 class="text-lg font-black text-[#003399]">Cylinder Repair / Stock Transfer</h2>
+                  <button class="btn btn-primary text-sm" @click="createStockTransfer()">Send</button>
+                </div>
+                <div class="grid gap-3 md:grid-cols-2">
+                  <input class="field" placeholder="Transfer number" x-model="stock.transfer_number" />
+                  <input class="field" placeholder="Truck number" x-model="stock.truck_number" />
+                  <select class="field" x-model="stock.transfer_type">
+                    <option>Inhouse STP</option>
+                    <option>Outside STP</option>
+                    <option>Hot Repair</option>
+                    <option>Hydro Test</option>
+                    <option>Scrap</option>
+                    <option>Other</option>
+                  </select>
+                  <input class="field" placeholder="Vendor name" x-model="stock.vendor_name" />
+                  <input class="field" type="date" x-model="stock.transfer_date" />
+                  <input class="field" type="date" x-model="stock.expected_return_date" />
+                  <select class="field" x-model="stock.material_code">
+                    <template x-for="m in materials" :key="m.material_code"><option :value="m.material_code" x-text="`${m.material_code} - ${m.cylinder_type}`"></option></template>
+                  </select>
+                  <input class="field" type="number" placeholder="Quantity" x-model="stock.quantity" />
+                  <select class="field" x-model="stock.condition">
+                    <option>Good</option>
+                    <option>Dent</option>
+                    <option>Leak</option>
+                    <option>Valve issue</option>
+                    <option>Body damage</option>
+                  </select>
+                  <button class="btn btn-outline" @click="returnStockTransfer()">Post Return</button>
+                </div>
+                <p class="mt-2 text-sm font-bold text-[#003399]" x-text="stockMessage"></p>
+              </div>
+            </div>
+
+            <div class="grid gap-4 xl:grid-cols-[1fr_1.2fr]">
+              <div class="rounded-md bg-white p-4 shadow-sm">
+                <h2 class="mb-3 text-lg font-black text-[#003399]">YM89 Issue / Receipt Reconciliation</h2>
+                <div class="grid gap-3">
+                  <input id="ym89IssueUpload" type="file" class="field" />
+                  <input id="ym89ReceiptUpload" type="file" class="field" />
+                  <button class="btn btn-outline" @click="reconcileYm89()">Run Reconciliation</button>
+                  <p class="text-sm font-bold text-[#003399]" x-text="ym89Message"></p>
+                </div>
+              </div>
+              <div class="rounded-md bg-white p-4 shadow-sm">
+                <h2 class="mb-3 text-lg font-black text-[#003399]">Open Mismatch Queue</h2>
+                <div class="max-h-[280px] overflow-auto">
+                  <table class="tabular w-full text-sm">
+                    <thead><tr><th>Type</th><th>Truck</th><th>Expected</th><th>Actual</th><th>Status</th></tr></thead>
+                    <tbody>
+                      <template x-for="m in mismatches" :key="m.id">
+                        <tr>
+                          <td x-text="m.mismatch_type"></td>
+                          <td x-text="m.truck_number || '-'"></td>
+                          <td x-text="m.expected_quantity"></td>
+                          <td x-text="m.actual_quantity"></td>
+                          <td><span class="status-pill" :class="m.severity === 'RED' ? 'red' : 'green'" x-text="m.status"></span></td>
+                        </tr>
+                      </template>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="rounded-md bg-white p-4 shadow-sm">
+              <h2 class="mb-3 text-lg font-black text-[#003399]">Live Truck Movement Timeline</h2>
+              <div class="max-h-[340px] overflow-auto">
+                <table class="tabular w-full text-sm">
+                  <thead><tr><th>ID</th><th>Truck</th><th>Flow</th><th>Distributor</th><th>Stage</th><th>Expected</th><th>Physical</th><th>Status</th></tr></thead>
+                  <tbody>
+                    <template x-for="row in movements" :key="row.id">
+                      <tr @click="selectedMovementId=row.id" :class="selectedMovementId === row.id ? 'selected-row' : ''">
+                        <td x-text="row.id"></td>
+                        <td x-text="row.truck_number"></td>
+                        <td x-text="row.flow_type"></td>
+                        <td x-text="row.distributor_name || '-'"></td>
+                        <td x-text="row.current_stage"></td>
+                        <td x-text="row.expected_quantity"></td>
+                        <td x-text="row.physical_quantity"></td>
+                        <td><span class="status-pill" :class="row.match_status === 'RED' ? 'red' : row.match_status === 'GREEN' ? 'green' : 'yellow'" x-text="row.match_status"></span></td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div x-show="activeScreen === 'execution'" class="grid gap-4">
+            <div class="grid gap-4 lg:grid-cols-3">
+              <div class="rounded-md bg-white p-4 shadow-sm lg:col-span-2">
+                <h2 class="mb-3 text-lg font-black text-[#003399]">Planned vs Invoiced Loads</h2>
+                <div class="h-[320px]"><canvas id="dailyChart"></canvas></div>
+              </div>
+              <div class="rounded-md bg-white p-4 shadow-sm">
+                <h2 class="mb-3 text-lg font-black text-[#003399]">Exception Tracker</h2>
+                <div class="h-[320px]"><canvas id="exceptionChart"></canvas></div>
+              </div>
+            </div>
+            <div class="rounded-md bg-white p-4 shadow-sm">
+              <h2 class="mb-3 text-lg font-black text-[#003399]">Hourly Invoicing Progress</h2>
+              <div class="h-[240px]"><canvas id="hourlyChart"></canvas></div>
+            </div>
+          </div>
+
+          <div class="mt-5 rounded-md bg-white p-4 shadow-sm">
+            <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
+              <h2 class="text-lg font-black text-[#003399]">Plant Execution Grid</h2>
+              <div class="flex flex-wrap items-center gap-3">
+                <label class="text-sm font-bold">Column width <input class="align-middle" type="range" min="92" max="260" x-model="gridWidth" /></label>
+                <input class="rounded border border-slate-300 px-3 py-2 text-sm" placeholder="Filter any column" x-model="filter" />
+                <input class="rounded border border-slate-300 px-3 py-2 text-sm" type="date" x-model="today" @change="loadSpd()" />
+              </div>
+            </div>
+            <div class="max-h-[560px] overflow-auto">
+              <table class="tabular min-w-full text-sm">
+                <thead>
+                  <tr>
+                    <th @click="sortBy('sap_code')">SAP Code</th>
+                    <th @click="sortBy('name')">Distributor</th>
+                    <th @click="sortBy('lsa_name')">LSA</th>
+                    <th @click="sortBy('supply_plant')">Plant</th>
+                    <th @click="sortBy('target_loads')">Planned</th>
+                    <th>Indent No.</th>
+                    <th @click="sortBy('loads_invoiced')">Invoiced</th>
+                    <th>Indent</th>
+                    <th>Funds</th>
+                    <th>Other Issues</th>
+                    <th>Save</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template x-for="(row, r) in filteredRows()" :key="row.sap_code">
+                    <tr>
+                      <td x-text="row.sap_code"></td>
+                      <td :style="`min-width:${gridWidth}px`" x-text="row.name"></td>
+                      <td :style="`min-width:${gridWidth}px`" x-text="row.lsa_name"></td>
+                      <td x-text="row.supply_plant"></td>
+                      <td class="font-black" x-text="row.target_loads"></td>
+                      <td><input class="cell-input" x-model="row.indent_no" :style="`min-width:${gridWidth}px`" :data-cell="`${r}:0`" @keydown="moveCell($event,r,0)" /></td>
+                      <td><input class="cell-input" type="number" min="0" x-model="row.loads_invoiced" :data-cell="`${r}:1`" @keydown="moveCell($event,r,1)" /></td>
+                      <td class="text-center"><input type="checkbox" x-model="row.sap_indent_available" :data-cell="`${r}:2`" @keydown="moveCell($event,r,2)" /></td>
+                      <td class="text-center"><input type="checkbox" x-model="row.fund_shortage_block" :data-cell="`${r}:3`" @keydown="moveCell($event,r,3)" /></td>
+                      <td><input class="cell-input" x-model="row.other_issue_flag" :style="`min-width:${gridWidth}px`" :data-cell="`${r}:4`" @keydown="moveCell($event,r,4)" /></td>
+                      <td><button class="btn btn-primary text-xs" @click="saveExecution(row)">Save</button></td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </template>
+    </main>
+  </body>
+</html>

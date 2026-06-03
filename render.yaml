@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: indane-sales-monitoring
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /
+    envVars:
+      - key: APP_NAME
+        value: INDANE SALES MONITORING
+      - key: PUBLIC_BASE_URL
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: indane-sales-db
+          property: connectionString
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_USERNAME
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+
+databases:
+  - name: indane-sales-db
+    plan: starter
+    databaseName: indane_sales
+    user: indane

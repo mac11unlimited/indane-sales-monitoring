@@ -1,0 +1,3179 @@
+[
+  {
+    "sap_code": "175271",
+    "name": "AARYAMAN INDANE GAS AGENCY",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "BAGHPAT",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "156162",
+    "name": "AMAR INDANE GAS AGENCY",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "BAGHPAT",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "305700",
+    "name": "AMINAGAR SARAI INDANE SEWA",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "BAGHPAT",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "153956",
+    "name": "ANIL INDANE GAS SERVICE",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "BAGHPAT",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "155247",
+    "name": "BAGHPAT GAS SERVICE",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "BAGHPAT",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "284747",
+    "name": "BAKARPUR BALENI INDANE GRAMIN",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "BAGHPAT",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "153957",
+    "name": "BARAUT GAS SERVICE",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "BAGHPAT",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "278071",
+    "name": "BHAVYA INDANE GRAMIN VITRAK",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "BAGHPAT",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "103860",
+    "name": "Bhawan Indane Gas Service",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "SHAMLI",
+    "urban_rural": "Urban",
+    "supply_plant": "Karnal BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "248649",
+    "name": "CHHOTU RAM INDANE GRAMIN VITRA",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "BAGHPAT",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "311398",
+    "name": "DHANAURA SILVER NAGAR INDANE SEWA",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "BAGHPAT",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "304041",
+    "name": "HARE KRISHNA INDANE SEWA",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "SHAMLI",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "260670",
+    "name": "HARNARAIN INDANE GRAMIN VITRAK",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "BAGHPAT",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "278268",
+    "name": "JAI BABA INDANE SEWA",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "BAGHPAT",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "287638",
+    "name": "JALALABAD INDANE SEWA",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "SHAMLI",
+    "urban_rural": "Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "311620",
+    "name": "JANTA INDANE SEWA",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "BAGHPAT",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "103103",
+    "name": "KAIRANA GAS SERVICE",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "SHAMLI",
+    "urban_rural": "Urban",
+    "supply_plant": "Karnal BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "154939",
+    "name": "KHEKRA GAS SERVICE",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "BAGHPAT",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "247385",
+    "name": "KIRTHAL INDANE GRAMIN VITRAK",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "BAGHPAT",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "269155",
+    "name": "LISARH INDANE GRAMIN VITRAK",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "SHAMLI",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "310573",
+    "name": "M S INDANE SEWA",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "SHAMLI",
+    "urban_rural": "Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "314812",
+    "name": "MAWIKALAN INDANE SEWA",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "BAGHPAT",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "197590",
+    "name": "OON INDANE GAS SERVICE",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "BAGHPAT",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "287222",
+    "name": "PITAM GOVIND INDANE SEWA",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "BAGHPAT",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "280551",
+    "name": "RATAUL INDANE  GRAMIN VITRAK",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "BAGHPAT",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "311380",
+    "name": "SATYA INDANE SEWA",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "BAGHPAT",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "154280",
+    "name": "SHAHEED IQBAL INDANE GAS SERV.",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "BAGHPAT",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "314369",
+    "name": "SHAKTI INDANE SEWA",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "BAGHPAT",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "103096",
+    "name": "SHAMLI GAS SERVICE",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "SHAMLI",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "285193",
+    "name": "SHREE KRISHNA INDANE SEWA",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "BAGHPAT",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "277202",
+    "name": "SHREE SHAKUMBHARI INDANE GRAMI",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "SHAMLI",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "311052",
+    "name": "SHREE SHYAM INDANE SEWA",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "SHAMLI",
+    "urban_rural": "Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "315972",
+    "name": "SUNHETI INDANE SEWA",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "SHAMLI",
+    "urban_rural": "Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "313295",
+    "name": "UDAYVEER INDANE SEWA",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "SHAMLI",
+    "urban_rural": "Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "311399",
+    "name": "V.K.INDANE SEWA",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "BAGHPAT",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "289339",
+    "name": "VINAYAK INDANE SEWA",
+    "lsa_name": "Baghpat LPG SA",
+    "district": "SHAMLI",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "316762",
+    "name": "FATEHPUR INDANE SEWA",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "311343",
+    "name": "KUNJ INDANE SEWA",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Urban",
+    "supply_plant": "Kashipur BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "311369",
+    "name": "SHIVAM INDANE SEWA",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Kashipur BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "154196",
+    "name": "CHANDPUR GAS SERVICE",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "176890",
+    "name": "NAVEEN INDANE GAS SERVICE",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Rural",
+    "supply_plant": "Kashipur BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "155410",
+    "name": "NAJIBABAD GAS SERVICE",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "289344",
+    "name": "BASTA INDANE SEWA",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "275733",
+    "name": "OM HARI INDANE GRAMIN VITRAK",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "319572",
+    "name": "HEEMPUR INDANE SEWA",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "289336",
+    "name": "ASHOK INDANE SEWA",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "304518",
+    "name": "RAIPUR SADAT INDANE SEWA",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "287187",
+    "name": "SHREE G INDANE SEWA",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "309418",
+    "name": "BAROOKI INDANE SEWA",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "154957",
+    "name": "KIRATPUR GAS AGENCY",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "289355",
+    "name": "SHAKUNTALAM INDANE SEWA",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "154130",
+    "name": "BIJNOR GAS AGENCY",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "173656",
+    "name": "AFZALGARH INDANE GAS AGENCY",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Rural",
+    "supply_plant": "Kashipur BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "284578",
+    "name": "KUCHHAL INDANE SEWA",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Urban",
+    "supply_plant": "Roorkee BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "289636",
+    "name": "RATANGARH INDANE GRAMIN VITRAK",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "291187",
+    "name": "TEJ INDANE SEWA",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Kashipur BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "313375",
+    "name": "HAREWALI INDANE SEWA",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Rural",
+    "supply_plant": "Kashipur BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "280605",
+    "name": "KOTWALI INDANE SEWA",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "155460",
+    "name": "NOORPUR INDANE GAS AGENCY",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Rural",
+    "supply_plant": "Kashipur BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "311342",
+    "name": "KADARPUR TAYYAB INDANE SEWA",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "155729",
+    "name": "SEOHARA GAS SERVICE",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Rural",
+    "supply_plant": "Kashipur BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "156275",
+    "name": "NAGINA GAS SERVICE",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Urban",
+    "supply_plant": "Kashipur BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "173598",
+    "name": "BARHAPUR INDANE GAS AGENCY",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "313374",
+    "name": "GARAWPUR INDANE SEWA",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Rural",
+    "supply_plant": "Kashipur BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "287227",
+    "name": "MORNA INDANE GRAMIN VITRAK",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Rural",
+    "supply_plant": "Kashipur BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "154141",
+    "name": "POLICE GAS AGENCY",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "312599",
+    "name": "HALDAUR INDANE SEWA",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "279563",
+    "name": "SAI INDANE GAS SEWA",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Rural",
+    "supply_plant": "Kashipur BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "313487",
+    "name": "SINHALI INDANE SEWA",
+    "lsa_name": "Bijnore LPG SA",
+    "district": "BIJNOR",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "283555",
+    "name": "AAHAR BANGER INDANE GRAMIN VIT",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "314319",
+    "name": "ACHEJA GHAT INDANE SEWA",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "285492",
+    "name": "ADAULI INDANE GRAMIN VITRAK",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "311453",
+    "name": "AKBARPUR RAINA INDANE SEWA",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "271897",
+    "name": "ALHAMD INDANE GRAMIN VITRAK",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "281357",
+    "name": "AMARGARH INDANE GRAMIN VITRAK",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "265964",
+    "name": "APOORVA INDANE GRAMIN   VITRAK",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "286433",
+    "name": "BARAL INDANE GRAMIN VITRAK",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "195901",
+    "name": "BHAGWATI DEVI INDANE GAS AGENC",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Urban",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "156191",
+    "name": "BINDU INDANE DISTRIBUTORS",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "154240",
+    "name": "DIBAI GAS SERVICE",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "154527",
+    "name": "GULOATHI GAS SERVICE",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Urban",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "261037",
+    "name": "HARI INDANE GRAMIN VITRAK",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "286221",
+    "name": "INDAUR INDANE GRAMIN VITRAK",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "255160",
+    "name": "JAGDAMBA INDANE GRAMIN VITRAK",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "154631",
+    "name": "JAHANGIRABAD GAS SERVICE",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Urban",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "286935",
+    "name": "JAI DURGE INDANE SEWA",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Urban",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "263836",
+    "name": "KAIF INDANE GRAMIN VITRAK",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "286223",
+    "name": "LAXMI INDANE SEWA",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "269779",
+    "name": "MAA VAISHNO INDANEGRAMINVITRAK",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "276521",
+    "name": "MAMTA INDANE GRAMIN VITRAK",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "155423",
+    "name": "NAPP EMPLOYEES CO-OPERATIVE",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Urban",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "196638",
+    "name": "NARAYANI INDANE GAS SERVICE,",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Urban",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "255156",
+    "name": "OM SAI INDANE GRAMIN VITRAK",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "250339",
+    "name": "OMKAR INDANE GRAMIN VITRAK",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "182761",
+    "name": "PHOOL INDANE GAS SERVICE,",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "287415",
+    "name": "PRADHAN INDANE SEWA",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "269774",
+    "name": "PRAKASH INDANE GRAMIN VITRAK",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "314258",
+    "name": "RAJBALA INDANE SEWA",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "259687",
+    "name": "RAM KRISHNA INDANE GRAMIN VITR",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "263838",
+    "name": "SAI NATH INDANE GRAMIN VITRAK",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "169357",
+    "name": "SAURABH INDANE GAS SERVICE",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "156349",
+    "name": "SHAHEED SURENDRA INDANE SERVIC",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Urban",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "153815",
+    "name": "TYAGI INDANE GAS SERVICE",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "276526",
+    "name": "VIVEK INDANE GRAMIN VITRAK",
+    "lsa_name": "Bulandshahr",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "169354",
+    "name": "Dasna Indane Gas Service",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "154407",
+    "name": "ENGINEERS GAS SERVICE",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "169355",
+    "name": "KHWAJA GARIB NAWAZ INDANE GAS SERVI",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "285491",
+    "name": "SIKRIKHURD INDANE SEWA",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "279860",
+    "name": "MANAN INDANE SEWA",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "199020",
+    "name": "ASHA GAS AGENCY,",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "169360",
+    "name": "BS Indane Gas Service",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "288750",
+    "name": "MADHURIMA INDANE SEWA",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "MPK BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "288684",
+    "name": "TRIVENI INDANE SEWA",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "154408",
+    "name": "GHAZIABAD GAS SERVICE",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "154415",
+    "name": "RAJ GAS SERVICE",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "289403",
+    "name": "SAI GANGA INDANE SEWA",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "MPK BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "155373",
+    "name": "MURADNAGAR GAS SERVICE",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "MPK BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "296091",
+    "name": "ANU INDANE SEWA",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "MPK BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "156212",
+    "name": "ROHAN INDANE GAS SERVICE",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "288672",
+    "name": "SURAJ INDANE SEWA",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "311223",
+    "name": "GOVINDPURAM INDANE SEWA",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "259686",
+    "name": "NIWARI INDANE GRAMIN VITRAK",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Rural",
+    "supply_plant": "MPK BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "155297",
+    "name": "KANISHKA ENTERPRISES",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "260255",
+    "name": "M/S CHAUDHARY INDANE GRAMIN VI",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "253007",
+    "name": "GHARANA INDANE GRAMIN VITRAK",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Rural",
+    "supply_plant": "MPK BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "286092",
+    "name": "NAHAL INDANE GRAMIN VITRAK",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Rural",
+    "supply_plant": "MPK BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "286413",
+    "name": "SULTANPUR INDANE GRAMIN VITRAK",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "311611",
+    "name": "MODINAGAR INDANE SEWA",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "278077",
+    "name": "DEVANSH INDANE GRAMIN VITRAK",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "155300",
+    "name": "SAINIK INDANE GAS SERVICE",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "155374",
+    "name": "WELFARE GAS SERVICE",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "285494",
+    "name": "RAJ INDANE GRAMIN VITRAK",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "356550",
+    "name": "MUKIMPUR INDANE GAS SEWA",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Rural",
+    "supply_plant": "MPK BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "285952",
+    "name": "PAINGA INDANE GRAMIN VITRAK",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "154422",
+    "name": "TASK FORCE INDANE GAS SERVICE",
+    "lsa_name": "Ghaziabad I LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "154403",
+    "name": "AIR FORCE GAS AGENCY",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "288065",
+    "name": "ANJALI INDANE SEWA",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "MPK BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "282608",
+    "name": "ANMOL INDANE SEWA",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "155673",
+    "name": "BHARAT BHUSHAN GAS SERVICE",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "MPK BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "239275",
+    "name": "BHUMIKA INDANE GAS SERVICE",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "155674",
+    "name": "Chander Nagar Gas Service",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "MPK BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "286826",
+    "name": "CHAUDHARY INDANE SEWA",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "154406",
+    "name": "D.N.ENTERPRISES",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "MPK BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "311048",
+    "name": "DHAMA INDANE SEWA",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "MPK BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "156238",
+    "name": "FREEDOM GAS SERVICE",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "313287",
+    "name": "HANS INDANE SEWA",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "154409",
+    "name": "HINDON GAS SERVICE",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "MPK BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "288941",
+    "name": "JAWAHAR NAGAR INDANE SEWA",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "311622",
+    "name": "KANAK INDANE SEWA",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "MPK BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "289175",
+    "name": "KOMAL INDANE SEWA",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "301893",
+    "name": "LONI INDANE SEWA",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "311375",
+    "name": "MAA BHAGWATI INDANE SEWA",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "154412",
+    "name": "NIM GAS SERVICES",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "154414",
+    "name": "PRANKUR INDANE GAS SERVICE",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "291208",
+    "name": "RADHEY INDANE SEWA",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "361501",
+    "name": "RAZA INDANE SEWA",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "MPK BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "249555",
+    "name": "SAI BABA INDANE GAS SEWA",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "MPK BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "154419",
+    "name": "SARASWATI GAS SERVICE",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "MPK BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "244939",
+    "name": "SHAHEED MAJOR SUDHIR CHHIKARA",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "156143",
+    "name": "SHAHEED OM PRAKASH INDANE GAS SERVI",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "285490",
+    "name": "SHIV SAI INDANE SEWA",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "MPK BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "288128",
+    "name": "SHIVJI INDANE SEWA",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "277349",
+    "name": "SHRI DURGA INDANE GAS",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "287158",
+    "name": "TILA INDANE SEWA",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "155676",
+    "name": "UNITED GAS COMPANY",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "MPK BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "155677",
+    "name": "YADU INDANE GAS SEWA",
+    "lsa_name": "Ghaziabad II LPG SA",
+    "district": "GHAZIABAD",
+    "urban_rural": "Urban",
+    "supply_plant": "MPK BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "309275",
+    "name": "AKBARPUR PATTI INDANE SEWA",
+    "lsa_name": "Hapur LPG SA",
+    "district": "AMROHA",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "153803",
+    "name": "AMROHA GAS SERVICE,AMROHA",
+    "lsa_name": "Hapur LPG SA",
+    "district": "AMROHA",
+    "urban_rural": "Urban",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "287957",
+    "name": "ARPIT INDANE SEWA",
+    "lsa_name": "Hapur LPG SA",
+    "district": "AMROHA",
+    "urban_rural": "Urban",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "156134",
+    "name": "BACHHRAUN INDANE GAS AGENCY",
+    "lsa_name": "Hapur LPG SA",
+    "district": "AMROHA",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "313134",
+    "name": "BHUMIJA INDANE SEWA",
+    "lsa_name": "Hapur LPG SA",
+    "district": "AMROHA",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "304513",
+    "name": "CHUCHAILA KALAN INDANE SEWA",
+    "lsa_name": "Hapur LPG SA",
+    "district": "AMROHA",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "314279",
+    "name": "DEOLI INDANE SEWA",
+    "lsa_name": "Hapur LPG SA",
+    "district": "HAPUR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "290256",
+    "name": "DHAUTEE INDANE GRAMIN VITRAK",
+    "lsa_name": "Hapur LPG SA",
+    "district": "AMROHA",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "309619",
+    "name": "DHILLON INDANE SEWA",
+    "lsa_name": "Hapur LPG SA",
+    "district": "AMROHA",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Kashipur BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "285488",
+    "name": "GALAND INDANE GRAMIN VITRAK",
+    "lsa_name": "Hapur LPG SA",
+    "district": "HAPUR",
+    "urban_rural": "Rural",
+    "supply_plant": "MPK BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "310792",
+    "name": "GURUNANAK INDANE SEWA",
+    "lsa_name": "Hapur LPG SA",
+    "district": "AMROHA",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "313300",
+    "name": "HAIDERPUR INDANE SEWA",
+    "lsa_name": "Hapur LPG SA",
+    "district": "HAPUR",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "154542",
+    "name": "HAPUR GAS SERVICE",
+    "lsa_name": "Hapur LPG SA",
+    "district": "HAPUR",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "154563",
+    "name": "HASANPUR GAS AGENCY",
+    "lsa_name": "Hapur LPG SA",
+    "district": "AMROHA",
+    "urban_rural": "Urban",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "247423",
+    "name": "HIMANSU INDANE GRAMIN VITRAK",
+    "lsa_name": "Hapur LPG SA",
+    "district": "AMROHA",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "280604",
+    "name": "JAHTAULI INDANE GRAMIN VITRAK",
+    "lsa_name": "Hapur LPG SA",
+    "district": "AMROHA",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "310774",
+    "name": "JAMUNA KHAS INDANE SEWA",
+    "lsa_name": "Hapur LPG SA",
+    "district": "AMROHA",
+    "urban_rural": "Rural",
+    "supply_plant": "Kashipur BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "154663",
+    "name": "JOYA INDANE GAS AGENCY",
+    "lsa_name": "Hapur LPG SA",
+    "district": "AMROHA",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "285489",
+    "name": "MAHADEV INDANE GRAMIN VITRAK",
+    "lsa_name": "Hapur LPG SA",
+    "district": "HAPUR",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "153805",
+    "name": "MANGLAM FLAMES",
+    "lsa_name": "Hapur LPG SA",
+    "district": "AMROHA",
+    "urban_rural": "Urban",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "156277",
+    "name": "NAUGAON INDANE GAS AGENCY",
+    "lsa_name": "Hapur LPG SA",
+    "district": "AMROHA",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "155542",
+    "name": "NIRMAL GAS SERVICE",
+    "lsa_name": "Hapur LPG SA",
+    "district": "HAPUR",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "288560",
+    "name": "PILUKHWA INDANE SEWA",
+    "lsa_name": "Hapur LPG SA",
+    "district": "HAPUR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "305455",
+    "name": "PIPLEDA INDANE SEWA",
+    "lsa_name": "Hapur LPG SA",
+    "district": "HAPUR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "199031",
+    "name": "PREM GAS SERVICE",
+    "lsa_name": "Hapur LPG SA",
+    "district": "HAPUR",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "287963",
+    "name": "RAJABPUR INDANE SEWA",
+    "lsa_name": "Hapur LPG SA",
+    "district": "AMROHA",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "253008",
+    "name": "RAMSWAROOP INDANE GRAMIN VITRA",
+    "lsa_name": "Hapur LPG SA",
+    "district": "HAPUR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "263799",
+    "name": "SABRI INDANE GRAMIN VITRAK",
+    "lsa_name": "Hapur LPG SA",
+    "district": "AMROHA",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "278707",
+    "name": "SACHIN INDANE GAS AGENCY",
+    "lsa_name": "Hapur LPG SA",
+    "district": "AMROHA",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "313744",
+    "name": "SARIKA INDANE SEWA",
+    "lsa_name": "Hapur LPG SA",
+    "district": "HAPUR",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "283872",
+    "name": "SM INDANE GAS SEWA",
+    "lsa_name": "Hapur LPG SA",
+    "district": "HAPUR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "305480",
+    "name": "SRIKAR INDANE SEWA",
+    "lsa_name": "Hapur LPG SA",
+    "district": "HAPUR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "344543",
+    "name": "SWASTIKA INDANE SERVICE",
+    "lsa_name": "Hapur LPG SA",
+    "district": "HAPUR",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "230400",
+    "name": "UJHIARI INDANE GAS AGENCY",
+    "lsa_name": "Hapur LPG SA",
+    "district": "AMROHA",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "103104",
+    "name": "ACHALA GAS SERVICE",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "259445",
+    "name": "ALAM INDANE GRAMIN VITRAK",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "169362",
+    "name": "Ambika Indane Gas Service",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "155246",
+    "name": "ARMY GAS SERVICE",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "103092",
+    "name": "BAIJAL GAS SERVICE",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "169364",
+    "name": "BALASUNDRA INDANE GAS SERVICE",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "285181",
+    "name": "BHAGWANPUR INDANE GRAMIN VITRA",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "103085",
+    "name": "BUDH POORNA INDANE GAS",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "169365",
+    "name": "Chetna Indane Gas Service",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "248650",
+    "name": "DEV INDANE GRAMIN VITRAK",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "103097",
+    "name": "DIGAMBER ENTERPRISES",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "297288",
+    "name": "KANKERKHERA INDANE SEWA",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "285962",
+    "name": "KHIWAI INDANE GRAMIN VITRAK",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "315823",
+    "name": "KISHANPUR BIRANA INDANE SEWA",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "293884",
+    "name": "MASOORI INDANE SEWA",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "296812",
+    "name": "MAWANA INDANE SEWA",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "103093",
+    "name": "MEERUT GAS SERVICE",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "314097",
+    "name": "MULHEDA INDANE SEWA",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "297118",
+    "name": "MUSKAN INDANE SEWA",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "314116",
+    "name": "NANGLA SAHU INDANE SEWA",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "103077",
+    "name": "OBHRAI GAS SERVICE",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "237562",
+    "name": "PARWAN INDANE GAS SERVICE",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "277935",
+    "name": "PASCHIM UP SUB AREA GAS AGENCY",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "103080",
+    "name": "PASSI GAS SERVICE",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "272524",
+    "name": "POLICE LINE GAS SERVICE",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "103100",
+    "name": "RAMPOORNA GASES",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "103091",
+    "name": "RANA GAS SERVICE,",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "169352",
+    "name": "RANJANA INDANE GAS SERVICE",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "299826",
+    "name": "RUDRA INDANE SEWA",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "295101",
+    "name": "SADBHAAV INDANE SEWA",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "300091",
+    "name": "SANJEEVANI INDANE SEWA",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "308121",
+    "name": "SARDHANA INDANE SEWA",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "156388",
+    "name": "SHAKUN INDANE GAS SERVICE",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "103105",
+    "name": "SHREE DARSHAN GAS SERVICE",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "305216",
+    "name": "SHYAMNAGAR INDANE SEWA",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "103099",
+    "name": "SURYA GASES",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "154090",
+    "name": "SWAROOP INDANE GAS SERVICE",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "104356",
+    "name": "SWETA INDANE GAS SERVICE",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "103087",
+    "name": "VIJAYANT GAS SERVICE",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "103086",
+    "name": "YADAV GAS SERVICE",
+    "lsa_name": "Meerut I LPG SA",
+    "district": "MEERUT",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "103098",
+    "name": "ADHUNIK GAS SERVICE",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "304703",
+    "name": "ALMAASPUR INDANE SEWA",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "155378",
+    "name": "ANNAP00RNA INDANE GAS SERVICE",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "169363",
+    "name": "BALAJI INDANE GAS SERVICE",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "316790",
+    "name": "BHOPA INDANE SEWA",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "291188",
+    "name": "BHUMI INDANE SEWA",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "286930",
+    "name": "CHAUDHARY INDANE SEWA",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "288071",
+    "name": "CHHAPAR INDANE GRAMIN VITRAK",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "103081",
+    "name": "CO-OPFED GAS SERVICE",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "103082",
+    "name": "DEEPAK GAS SERVICE",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "311464",
+    "name": "GURUKRIPA INDANE SEWA",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "297416",
+    "name": "KAKROLI INDANE SEWA",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "315396",
+    "name": "KHANPUR INDANE SEWA",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "283871",
+    "name": "KHATAULI INDANE SERVICE",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "295472",
+    "name": "KISSAN INDANE SEWA",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "288321",
+    "name": "MAKHYALI INDANE GRAMIN VITRAK",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "296793",
+    "name": "MANSURPUR INDANE SEWA",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "287303",
+    "name": "MEERAPUR INDANE SEWA",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "103083",
+    "name": "MUZAFFARNAGAR GAS SERTVICE",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "103075",
+    "name": "POLICE INDANE GAS SERVICE",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "315810",
+    "name": "PREET INDANE SEWA",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "181370",
+    "name": "PURQAZI INDANE GAS SERVICE",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "289222",
+    "name": "RAGHU INDANE SEWA",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "316444",
+    "name": "RAJPUR CHHAJPUR INDANE SEWA",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "305241",
+    "name": "SARVAT INDANE SEWA",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "103079",
+    "name": "SHAHEED NARENDER INDANE GAS SE",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "156186",
+    "name": "SHAHEED SUSHIL INDANE GAS SEWA",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "196652",
+    "name": "SHAHPUR INDANE GAS SERVICE,",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "296787",
+    "name": "SHIV GAURI INDANE SEWA",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "155395",
+    "name": "SHREE PRABHU INDANE GAS SERVIC",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "103090",
+    "name": "SWAGAT GAS SERVICE",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "326213",
+    "name": "TITAWI INDANE SEWA",
+    "lsa_name": "Muzaffarnagar LPG SA",
+    "district": "MUZAFFARNAGAR",
+    "urban_rural": "Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "237560",
+    "name": "AARADHIKA INDANE GAS SERVICE",
+    "lsa_name": "Noida  LPG SA",
+    "district": "GAUTAM BUDH NAGAR",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "296088",
+    "name": "ADITYA DANKAUR INDANE SEWA",
+    "lsa_name": "Noida  LPG SA",
+    "district": "GAUTAM BUDH NAGAR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "155443",
+    "name": "AGNIHOTRI GAS SERVICE",
+    "lsa_name": "Noida  LPG SA",
+    "district": "GAUTAM BUDH NAGAR",
+    "urban_rural": "Urban",
+    "supply_plant": "MPK BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "296811",
+    "name": "ANUJ INDANE SEWA",
+    "lsa_name": "Noida  LPG SA",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Urban",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "269776",
+    "name": "ARNIYA KHURD INDANE GRAMIN VIT",
+    "lsa_name": "Noida  LPG SA",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "305729",
+    "name": "AVANTIPURAM INDANE SEWA",
+    "lsa_name": "Noida  LPG SA",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Urban",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "286436",
+    "name": "BABA KHAIRPUR INDANE GRAMIN VITRAK",
+    "lsa_name": "Noida  LPG SA",
+    "district": "GAUTAM BUDH NAGAR",
+    "urban_rural": "Rural",
+    "supply_plant": "MPK BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "291273",
+    "name": "BUDDHA INDANE SEWA",
+    "lsa_name": "Noida  LPG SA",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Urban",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "288579",
+    "name": "BULAND INDANE SEWA",
+    "lsa_name": "Noida  LPG SA",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Urban",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "304465",
+    "name": "CHANDRA INDANE SEWA",
+    "lsa_name": "Noida  LPG SA",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Urban",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "289058",
+    "name": "CHAUHAN INDANE SERVICE",
+    "lsa_name": "Noida  LPG SA",
+    "district": "GAUTAM BUDH NAGAR",
+    "urban_rural": "Urban",
+    "supply_plant": "MPK BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "286756",
+    "name": "DADRI INDANE SEWA",
+    "lsa_name": "Noida  LPG SA",
+    "district": "GAUTAM BUDH NAGAR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "MPK BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "251450",
+    "name": "DEVENDAR INDANE GRAMIN VITRAK",
+    "lsa_name": "Noida  LPG SA",
+    "district": "GAUTAM BUDH NAGAR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "311370",
+    "name": "DEVI SARASWATI INDANE SEWA",
+    "lsa_name": "Noida  LPG SA",
+    "district": "GAUTAM BUDH NAGAR",
+    "urban_rural": "Urban",
+    "supply_plant": "MPK BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "286384",
+    "name": "DUJANA INDANE GRAMIN VITRAK",
+    "lsa_name": "Noida  LPG SA",
+    "district": "GAUTAM BUDH NAGAR",
+    "urban_rural": "Rural",
+    "supply_plant": "MPK BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "286237",
+    "name": "HAIBATPUR PRADHAN INDANE GRAMIN VIT",
+    "lsa_name": "Noida  LPG SA",
+    "district": "GAUTAM BUDH NAGAR",
+    "urban_rural": "Rural",
+    "supply_plant": "MPK BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "154629",
+    "name": "JEWAR INDANE GAS SEWA",
+    "lsa_name": "Noida  LPG SA",
+    "district": "GAUTAM BUDH NAGAR",
+    "urban_rural": "Urban",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "315193",
+    "name": "KALAKHURI INDANE SEWA",
+    "lsa_name": "Noida  LPG SA",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "285493",
+    "name": "KARAURA INDANE GRAMIN VITRAK",
+    "lsa_name": "Noida  LPG SA",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "279550",
+    "name": "MISHITA INDANE GRAMIN VITRAK",
+    "lsa_name": "Noida  LPG SA",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "155450",
+    "name": "MITHALA GAS AGENCY",
+    "lsa_name": "Noida  LPG SA",
+    "district": "GAUTAM BUDH NAGAR",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "289592",
+    "name": "OMICORN INDANE SEWA",
+    "lsa_name": "Noida  LPG SA",
+    "district": "GAUTAM BUDH NAGAR",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "154179",
+    "name": "POLICE LINE GAS",
+    "lsa_name": "Noida  LPG SA",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Urban",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "284637",
+    "name": "R.K.INDANE SEWA",
+    "lsa_name": "Noida  LPG SA",
+    "district": "GAUTAM BUDH NAGAR",
+    "urban_rural": "Urban",
+    "supply_plant": "MPK BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "155455",
+    "name": "RANJAN GAS SERVICE",
+    "lsa_name": "Noida  LPG SA",
+    "district": "GAUTAM BUDH NAGAR",
+    "urban_rural": "Urban",
+    "supply_plant": "MPK BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "285444",
+    "name": "ROOPWAS INDANE GRAMIN VITRAK",
+    "lsa_name": "Noida  LPG SA",
+    "district": "GAUTAM BUDH NAGAR",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "154953",
+    "name": "ROYAL GAS SERVICES",
+    "lsa_name": "Noida  LPG SA",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Urban",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "287159",
+    "name": "SAMAIRA INDANE SEWA",
+    "lsa_name": "Noida  LPG SA",
+    "district": "GAUTAM BUDH NAGAR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "MPK BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "247334",
+    "name": "SARNI INDANE GRAMIN VITRAK",
+    "lsa_name": "Noida  LPG SA",
+    "district": "GAUTAM BUDH NAGAR",
+    "urban_rural": "Rural",
+    "supply_plant": "MPK BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "261687",
+    "name": "SAT SAHIB INDANE GRAMIN VITRAK",
+    "lsa_name": "Noida  LPG SA",
+    "district": "GAUTAM BUDH NAGAR",
+    "urban_rural": "Rural",
+    "supply_plant": "MPK BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "315205",
+    "name": "SHAHPUR KALAN INDANE SEWA",
+    "lsa_name": "Noida  LPG SA",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "283437",
+    "name": "SHIV SHAKTI INDANE SERVICE",
+    "lsa_name": "Noida  LPG SA",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "156381",
+    "name": "SHREE CHANDI INDANE GAS SERVIC",
+    "lsa_name": "Noida  LPG SA",
+    "district": "GAUTAM BUDH NAGAR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "253006",
+    "name": "SHREE GANESH INDANE GRAMIN VIT",
+    "lsa_name": "Noida  LPG SA",
+    "district": "GAUTAM BUDH NAGAR",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "155803",
+    "name": "SIKANDRABAD INDANE GAS SER",
+    "lsa_name": "Noida  LPG SA",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Urban",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "288861",
+    "name": "SURAJBHAN INDANE SEWA",
+    "lsa_name": "Noida  LPG SA",
+    "district": "GAUTAM BUDH NAGAR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "281715",
+    "name": "SURAJPUR INDANE GAS SEWA",
+    "lsa_name": "Noida  LPG SA",
+    "district": "GAUTAM BUDH NAGAR",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "169356",
+    "name": "TIRUPATI GAS SERVICE",
+    "lsa_name": "Noida  LPG SA",
+    "district": "BULANDSHAHR",
+    "urban_rural": "Urban",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "255686",
+    "name": "VARDAAN INDANE GAS",
+    "lsa_name": "Noida  LPG SA",
+    "district": "GAUTAM BUDH NAGAR",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "156292",
+    "name": "VINOD INDANE GAS SERVICE",
+    "lsa_name": "Noida  LPG SA",
+    "district": "GAUTAM BUDH NAGAR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Aligarh BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "103851",
+    "name": "ADARSH GAS AGENCY",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Urban",
+    "supply_plant": "Karnal BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "181415",
+    "name": "AIR FIELD GAS SERVICE",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Urban",
+    "supply_plant": "Karnal BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "316739",
+    "name": "AMAN INDANE SEWA",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "311412",
+    "name": "ARVIND INDANE SEWA",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "296264",
+    "name": "ASHIRWAD INDANE SEWA",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "281211",
+    "name": "BADGAON INDANE GAS SERVICE",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "103078",
+    "name": "CHAND ENTERPRISES",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Urban",
+    "supply_plant": "Karnal BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "103084",
+    "name": "DEEPSHIKHA GAS AGENCY",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Urban",
+    "supply_plant": "Karnal BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "103095",
+    "name": "DEOBAND GAS AGENCY",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Urban",
+    "supply_plant": "Karnal BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "311371",
+    "name": "DHARA INDANE SEWA",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "314498",
+    "name": "DHARAMPAL INDANE SEWA",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Loni BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "283894",
+    "name": "EKTA INDANE SEWA",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "297411",
+    "name": "GANDHI INDANE SEWA",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "293459",
+    "name": "GANESH INDANE SEWA",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "103102",
+    "name": "GANGOH GAS AGENCY",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Urban",
+    "supply_plant": "Karnal BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "104384",
+    "name": "GANPATI INDANE GAS SERVICE",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Urban",
+    "supply_plant": "Karnal BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "176181",
+    "name": "GAURAV INDANE GAS AGENCY",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Urban",
+    "supply_plant": "Karnal BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "247337",
+    "name": "GOLDEN INDANE GRAMIN VITRAK",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "304618",
+    "name": "GURUDEV INDANE SEWA",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "314611",
+    "name": "MACHRAULI INDANE SEWA",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "279402",
+    "name": "MOHAN INDANE SERVICE",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "192813",
+    "name": "NAKUR INDANE GAS AGENCY",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "309459",
+    "name": "PAL INDANE SEWA",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "103076",
+    "name": "POLICE LINES",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Urban",
+    "supply_plant": "Karnal BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "304673",
+    "name": "PUWARKAN INDANE SEWA",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "314613",
+    "name": "RAJPUR INDANE SEWA",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "103088",
+    "name": "RANA GAS AGENCY",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Urban",
+    "supply_plant": "Loni BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "262864",
+    "name": "RANKHANDI INDANE GRAMIN VITRAK",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "103852",
+    "name": "REMOUNT GAS",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Urban",
+    "supply_plant": "Karnal BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "155693",
+    "name": "SAHARANPUR INDANE GAS AGENCY",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Urban",
+    "supply_plant": "Karnal BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "103853",
+    "name": "SANDEEP GAS AGENCY",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Urban",
+    "supply_plant": "Karnal BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "103089",
+    "name": "SHAHEED KAILASH GAS SEWA",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "281999",
+    "name": "SHAILPUTRI INDANE GAS SERVICE",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "315416",
+    "name": "SIKANDERPUR INDANE SEWA",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "305061",
+    "name": "SRISHTI INDANE SEWA",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Urban Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "103849",
+    "name": "SUNBEAM GAS SERVICES",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Urban",
+    "supply_plant": "Karnal BP",
+    "final_planning": 2
+  },
+  {
+    "sap_code": "103843",
+    "name": "SUPERSTAR GAS SERVICE",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Urban",
+    "supply_plant": "Karnal BP",
+    "final_planning": 3
+  },
+  {
+    "sap_code": "273891",
+    "name": "TALHEDI INDANE GRAMIN VITRAK",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 0
+  },
+  {
+    "sap_code": "296272",
+    "name": "TAPRI INDANE SEWA",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Rural",
+    "supply_plant": "Karnal BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "182996",
+    "name": "VP INDANE GAS SERVICE",
+    "lsa_name": "Saharanpur  LPG SA",
+    "district": "SAHARANPUR",
+    "urban_rural": "Urban",
+    "supply_plant": "Karnal BP",
+    "final_planning": 1
+  },
+  {
+    "sap_code": "Noida Indane DO",
+    "name": "",
+    "lsa_name": "",
+    "district": "",
+    "urban_rural": "",
+    "supply_plant": "",
+    "final_planning": 250
+  }
+]

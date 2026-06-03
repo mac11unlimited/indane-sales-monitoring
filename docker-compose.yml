@@ -1,0 +1,27 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: indane_sales
+      POSTGRES_USER: indane
+      POSTGRES_PASSWORD: change-me
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  portal:
+    build: .
+    environment:
+      APP_NAME: "INDANE LPG GATE INVENTORY PORTAL"
+      PUBLIC_BASE_URL: "http://localhost:8095"
+      DATABASE_URL: "postgresql+asyncpg://indane:change-me@db:5432/indane_sales"
+      SECRET_KEY: "replace-with-a-long-random-secret-before-production"
+      ACCESS_TOKEN_EXPIRE_MINUTES: 720
+    ports:
+      - "8095:8095"
+    depends_on:
+      - db
+
+volumes:
+  postgres-data:
