@@ -29,7 +29,7 @@ if not exist "%NODE_EXE%" (
   exit /b 1
 )
 start "" "http://127.0.0.1:8095"
-"%NODE_EXE%" "%~dp0local_server.mjs" 8095 0.0.0.0
+"%NODE_EXE%" "%~dp0portal-server.mjs" 8095 0.0.0.0
 echo.
 echo Portal stopped. Press any key to close.
 pause >nul

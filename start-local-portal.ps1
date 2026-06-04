@@ -10,4 +10,4 @@ Write-Host "Starting INDANE SALES MONITORING local portal..." -ForegroundColor C
 Write-Host "Open: http://127.0.0.1:$Port" -ForegroundColor Green
 Write-Host "For Android on same Wi-Fi, open: http://<this-PC-IP>:$Port" -ForegroundColor Green
 Write-Host "Keep this window open while using the portal." -ForegroundColor Yellow
-& $Node "$ProjectRoot\local_server.mjs" $Port $HostName
+& $Node "$ProjectRoot\portal-server.mjs" $Port $HostName

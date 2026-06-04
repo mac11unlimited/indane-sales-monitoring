@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import sys
 import warnings
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -18,6 +19,12 @@ except Exception:  # pragma: no cover - local runtime fallback
 ROOT = Path(__file__).resolve().parent
 PORTAL = ROOT / "INDANE_SALES_MONITORING_PORTAL.html"
 SEED = ROOT / "data" / "portal-seed.json"
+LOG = ROOT / "local-http-portal.log"
+
+if sys.stdout is None:
+    sys.stdout = LOG.open("a", encoding="utf-8")
+if sys.stderr is None:
+    sys.stderr = LOG.open("a", encoding="utf-8")
 
 
 def load_seed() -> dict:
@@ -201,6 +208,9 @@ def normalize_spd(row: dict) -> dict:
 
 
 class PortalHandler(SimpleHTTPRequestHandler):
+    def log_message(self, format: str, *args: object) -> None:
+        return
+
     def translate_path(self, path: str) -> str:
         requested = urlparse(path).path
         if requested == "/":
