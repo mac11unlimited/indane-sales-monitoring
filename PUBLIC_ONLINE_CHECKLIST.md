@@ -10,13 +10,30 @@ https://indane-sales-monitoring.vercel.app/
 
 Do not share `http://127.0.0.1:8095` with seniors. That address opens only on the same PC where the local server is running.
 
+## First Network Health Test
+
+Before testing login or dashboard, ask the user to open:
+
+```text
+https://indane-sales-monitoring.vercel.app/health
+```
+
+Result meaning:
+
+- If `/health` opens, the public domain is reachable and the remaining issue is portal cache/login/data.
+- If `/health` does not open, the issue is network/domain blocking, not portal code.
+- If `/health` opens on mobile hotspot but not office LAN, the office LAN is blocking Vercel.
+
 ## If Public Site Does Not Open
 
 1. Ask the senior to open the HTTPS link in Chrome or Edge.
-2. Ask them to try mobile hotspot once. If it opens on hotspot but not office LAN, the office network is blocking Vercel.
-3. Ask IT/network team to allow:
+2. Ask them to open the health check:
+   `https://indane-sales-monitoring.vercel.app/health`
+3. Ask them to try mobile hotspot once. If it opens on hotspot but not office LAN, the office network is blocking Vercel.
+4. Ask IT/network team to allow:
    - `https://indane-sales-monitoring.vercel.app`
    - `https://*.vercel.app`
+5. If office IT cannot allow `*.vercel.app`, use a custom domain such as `indanesalesmonitoring.in` and ask IT to allow that specific domain.
 
 ## If Public Site Opens But Looks Old
 
@@ -33,6 +50,8 @@ After pushing to GitHub:
 ```text
 https://indane-sales-monitoring.vercel.app/?v=latest
 ```
+
+The repository includes strict no-store cache headers in `vercel.json`, but after a new deployment users should still refresh once with `Ctrl + F5`.
 
 ## Important Data Sync Limitation
 
