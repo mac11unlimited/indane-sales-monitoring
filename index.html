@@ -345,6 +345,23 @@ function cloudDataCounts(){
   let idoDays=Object.values(pi).reduce((a,m)=>a+Object.keys(m||{}).length,0);
   return 'Data counts: domestic days '+Object.keys(SEED.day_mt||{}).length+', product days '+productDays+', plant/product days '+plantDays+', IDO/product days '+idoDays+'.';
 }
+function productCloudReady(){return Object.keys(SEED.product_day_mt||{}).length>=10&&Object.keys(SEED.product_plant_day_mt||{}).length>=10&&Object.keys(SEED.product_ido_day_mt||{}).length>=10}
+function applyMcsiRollup(d){if(!d||typeof d!=='object')return false;['month_mt','day_mt','plant_day_mt','ido_day_mt','plant_ido_day_mt','product_day_mt','product_plant_day_mt','product_ido_day_mt','product_plant_ido_day_mt'].forEach(k=>{if(d[k])SEED[k]=d[k]});return productCloudReady()||Object.keys(SEED.day_mt||{}).length>0}
+async function loadStaticMcsiRollup(reason){
+  try{
+    let r=await fetch('data/mcsi-rollup.json?v=mcsi-static-637359e',{cache:'no-store'});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    let data=await r.json();
+    if(!applyMcsiRollup(data))throw new Error('Static rollup file did not contain usable MCSI data');
+    persistLocalState();
+    setCloudStatus('MCSI sales loaded from portal static fallback because '+reason+'. '+cloudDataCounts(),true);
+    msg('Full LY/CY all-product MCSI sales loaded from portal fallback. Dashboard refreshed live.');
+    return true;
+  }catch(e){
+    setCloudStatus('MCSI fallback failed: '+String(e.message||e).slice(0,220),false);
+    return false;
+  }
+}
 function portalStatePayload(){return{distributors,targets,spd,execution,ttRows,invoiceRefs,ttMailLogRows,salesUploadLog,userProfiles,auditLogRows,backlogReports,month_mt:SEED.month_mt,day_mt:SEED.day_mt,plant_day_mt:SEED.plant_day_mt||{},ido_day_mt:SEED.ido_day_mt||{},plant_ido_day_mt:SEED.plant_ido_day_mt||{},product_day_mt:SEED.product_day_mt||{},product_plant_day_mt:SEED.product_plant_day_mt||{},product_ido_day_mt:SEED.product_ido_day_mt||{},product_plant_ido_day_mt:SEED.product_plant_ido_day_mt||{}}}
 function applyPortalState(d){if(!d||typeof d!=='object')return;distributors=d.distributors||distributors;targets=d.targets||targets;spd=d.spd||spd;execution=d.execution||execution;ttRows=d.ttRows||ttRows;invoiceRefs=d.invoiceRefs||invoiceRefs;ttMailLogRows=d.ttMailLogRows||ttMailLogRows;salesUploadLog=d.salesUploadLog||salesUploadLog;userProfiles=d.userProfiles||userProfiles;auditLogRows=d.auditLogRows||auditLogRows;backlogReports=d.backlogReports||backlogReports;SEED.month_mt=d.month_mt||SEED.month_mt;SEED.day_mt=d.day_mt||SEED.day_mt;SEED.plant_day_mt=d.plant_day_mt||SEED.plant_day_mt||{};SEED.ido_day_mt=d.ido_day_mt||SEED.ido_day_mt||{};SEED.plant_ido_day_mt=d.plant_ido_day_mt||SEED.plant_ido_day_mt||{};SEED.product_day_mt=d.product_day_mt||SEED.product_day_mt||{};SEED.product_plant_day_mt=d.product_plant_day_mt||SEED.product_plant_day_mt||{};SEED.product_ido_day_mt=d.product_ido_day_mt||SEED.product_ido_day_mt||{};SEED.product_plant_ido_day_mt=d.product_plant_ido_day_mt||SEED.product_plant_ido_day_mt||{};persistLocalState()}
 function persistLocalState(){
@@ -374,6 +391,7 @@ async function loadCloudState(){
     let rows=await cloudRequest('portal_state?id=eq.'+encodeURIComponent(CLOUD_STATE_ID)+'&select=data,updated_by,updated_at',{method:'GET'});
     if(rows&&rows[0]&&rows[0].data&&Object.keys(rows[0].data).length){
       applyPortalState(rows[0].data);cloudReady=true;window.__indaneCloudLoadedOnce=true;
+      if(!productCloudReady())await loadStaticMcsiRollup('Supabase common row had no all-product MCSI memory');
       let by=rows[0].updated_by||'portal user',at=rows[0].updated_at?new Date(rows[0].updated_at).toLocaleString('en-IN'):'available';
       setCloudStatus('Supabase data loaded. Last update '+at+' by '+by+'. '+cloudDataCounts(),true);
       msg('Supabase data loaded/initialized. Dashboard refreshed live.');
@@ -385,8 +403,9 @@ async function loadCloudState(){
     }
   }catch(e){
     cloudReady=false;window.__indaneCloudLoadedOnce=false;
-    setCloudStatus('Failed: '+String(e.message||e).slice(0,260)+'. Cloud save is locked to protect shared data.',false);
-    msg('Supabase sync failed. Local mode active; shared cloud data will not be overwritten.');
+    let fallback=await loadStaticMcsiRollup('Supabase could not be reached');
+    setCloudStatus((fallback?'Supabase failed, but static LY/CY MCSI fallback is active. ':'Failed: ')+String(e.message||e).slice(0,220)+'. Cloud save is locked to protect shared data. '+cloudDataCounts(),fallback);
+    msg(fallback?'Supabase sync failed, but full MCSI sales fallback loaded.':'Supabase sync failed. Local mode active; shared cloud data will not be overwritten.');
   }finally{cloudLoading=false}
 }
 async function saveCloudState(force=false){
@@ -407,8 +426,8 @@ async function saveCloudState(force=false){
     if(force)alert('Supabase save failed. Please check setup SQL, anon policies and internet.\n'+e.message);
   }
 }
-function save(){persistLocalState();if(window.__indaneCloudLoadedOnce||cloudReady)scheduleCloudSave();else setCloudStatus('Local save done. Cloud save locked until Supabase loads successfully.',false)}
-Object.assign(window,{loadCloudState,saveCloudState,save});
+function save(){persistLocalState();if(window.__indaneCloudLoadedOnce||cloudReady)scheduleCloudSave();else setCloudStatus('Local save done. Cloud save locked until Supabase loads successfully. '+cloudDataCounts(),false)}
+Object.assign(window,{loadCloudState,saveCloudState,save,loadStaticMcsiRollup});
 </script>
 </body></html>
 
