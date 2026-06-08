@@ -333,6 +333,82 @@ function installAuditWrappers(){[['saveTargets','TARGET_SETTING_UPDATE',()=>('Mo
 installAuditWrappers();
 window.addEventListener('DOMContentLoaded',installMobileControls);
 Object.assign(window,{toggleMobileNav,closeMobileNav,setPortalZoom,resetPortalZoom,testCloudSync,loadCloudNow,saveCloudNow});Object.assign(window,{login,logout,show,msg,renderDashboard,renderTargets,saveTargets,resetTargetMonth,renderMaster,uploadDistributorMaster,loadDistributorForEdit,saveDistributor,renderSpd,uploadSpdExcel,approveSpd,autoGenerateSpd,downloadBenchmarkSpd,renderExec,saveExec,uploadInvoiceReport,downloadInvoiceUploadFormat,generateMailSummary,uploadMcsiSales,checkRefreshDashboard,previewBacklogUpload,confirmBacklogUpload,resetBacklogPreview,resetConfirmedBacklog,uploadYv99,downloadYv99Format,manualTTMail,clearTTFilters,renderTT,saveProfile,saveAdminUserProfile,loadAdminUserProfile,renderAuditLog,clearAuditLog,exportTable,downloadCurrentCsv});
+
+// Cloud hardening: never overwrite the shared Supabase record with a small
+// default/local state when a user's network blocks cloud loading. Large MCSI
+// rollups stay cloud-first; localStorage keeps only compact operational data.
+window.__indaneCloudLoadedOnce=false;
+function cloudDataCounts(){
+  let pd=SEED.product_day_mt||{}, pp=SEED.product_plant_day_mt||{}, pi=SEED.product_ido_day_mt||{};
+  let productDays=Object.values(pd).reduce((a,m)=>a+Object.keys(m||{}).length,0);
+  let plantDays=Object.values(pp).reduce((a,m)=>a+Object.keys(m||{}).length,0);
+  let idoDays=Object.values(pi).reduce((a,m)=>a+Object.keys(m||{}).length,0);
+  return 'Data counts: domestic days '+Object.keys(SEED.day_mt||{}).length+', product days '+productDays+', plant/product days '+plantDays+', IDO/product days '+idoDays+'.';
+}
+function portalStatePayload(){return{distributors,targets,spd,execution,ttRows,invoiceRefs,ttMailLogRows,salesUploadLog,userProfiles,auditLogRows,backlogReports,month_mt:SEED.month_mt,day_mt:SEED.day_mt,plant_day_mt:SEED.plant_day_mt||{},ido_day_mt:SEED.ido_day_mt||{},plant_ido_day_mt:SEED.plant_ido_day_mt||{},product_day_mt:SEED.product_day_mt||{},product_plant_day_mt:SEED.product_plant_day_mt||{},product_ido_day_mt:SEED.product_ido_day_mt||{},product_plant_ido_day_mt:SEED.product_plant_ido_day_mt||{}}}
+function applyPortalState(d){if(!d||typeof d!=='object')return;distributors=d.distributors||distributors;targets=d.targets||targets;spd=d.spd||spd;execution=d.execution||execution;ttRows=d.ttRows||ttRows;invoiceRefs=d.invoiceRefs||invoiceRefs;ttMailLogRows=d.ttMailLogRows||ttMailLogRows;salesUploadLog=d.salesUploadLog||salesUploadLog;userProfiles=d.userProfiles||userProfiles;auditLogRows=d.auditLogRows||auditLogRows;backlogReports=d.backlogReports||backlogReports;SEED.month_mt=d.month_mt||SEED.month_mt;SEED.day_mt=d.day_mt||SEED.day_mt;SEED.plant_day_mt=d.plant_day_mt||SEED.plant_day_mt||{};SEED.ido_day_mt=d.ido_day_mt||SEED.ido_day_mt||{};SEED.plant_ido_day_mt=d.plant_ido_day_mt||SEED.plant_ido_day_mt||{};SEED.product_day_mt=d.product_day_mt||SEED.product_day_mt||{};SEED.product_plant_day_mt=d.product_plant_day_mt||SEED.product_plant_day_mt||{};SEED.product_ido_day_mt=d.product_ido_day_mt||SEED.product_ido_day_mt||{};SEED.product_plant_ido_day_mt=d.product_plant_ido_day_mt||SEED.product_plant_ido_day_mt||{};persistLocalState()}
+function persistLocalState(){
+  try{localStorage.removeItem('indaneProductPlantIdoDayMt')}catch(e){}
+  try{localStorage.indaneDistributors=JSON.stringify(distributors)}catch(e){}
+  try{localStorage.indaneTargets=JSON.stringify(targets)}catch(e){}
+  try{localStorage.indaneSpd=JSON.stringify(spd)}catch(e){}
+  try{localStorage.indaneExecution=JSON.stringify(execution)}catch(e){}
+  try{localStorage.indaneTTRows=JSON.stringify(ttRows)}catch(e){}
+  try{localStorage.indaneInvoiceRefs=JSON.stringify(invoiceRefs)}catch(e){}
+  try{localStorage.indaneTTMailLog=JSON.stringify(ttMailLogRows)}catch(e){}
+  try{localStorage.indaneSalesUploadLog=JSON.stringify(salesUploadLog)}catch(e){}
+  try{localStorage.indaneUserProfiles=JSON.stringify(userProfiles)}catch(e){}
+  try{localStorage.indaneAuditLog=JSON.stringify(auditLogRows)}catch(e){}
+  try{localStorage.indaneMonthMt=JSON.stringify(SEED.month_mt)}catch(e){}
+  try{localStorage.indaneDayMt=JSON.stringify(SEED.day_mt)}catch(e){}
+  try{localStorage.indanePlantDayMt=JSON.stringify(SEED.plant_day_mt||{})}catch(e){}
+  try{localStorage.indaneIdoDayMt=JSON.stringify(SEED.ido_day_mt||{})}catch(e){}
+  try{localStorage.indanePlantIdoDayMt=JSON.stringify(SEED.plant_ido_day_mt||{})}catch(e){}
+  try{localStorage.indaneBacklogReports=JSON.stringify(backlogReports)}catch(e){}
+  try{localStorage.removeItem('indaneProductDayMt');localStorage.removeItem('indaneProductPlantDayMt');localStorage.removeItem('indaneProductIdoDayMt')}catch(e){}
+}
+async function loadCloudState(){
+  if(cloudLoading||!SUPABASE_URL||!SUPABASE_ANON_KEY)return;
+  cloudLoading=true;setCloudStatus('Connecting to Supabase common repository...',true);
+  try{
+    let rows=await cloudRequest('portal_state?id=eq.'+encodeURIComponent(CLOUD_STATE_ID)+'&select=data,updated_by,updated_at',{method:'GET'});
+    if(rows&&rows[0]&&rows[0].data&&Object.keys(rows[0].data).length){
+      applyPortalState(rows[0].data);cloudReady=true;window.__indaneCloudLoadedOnce=true;
+      let by=rows[0].updated_by||'portal user',at=rows[0].updated_at?new Date(rows[0].updated_at).toLocaleString('en-IN'):'available';
+      setCloudStatus('Supabase data loaded. Last update '+at+' by '+by+'. '+cloudDataCounts(),true);
+      msg('Supabase data loaded/initialized. Dashboard refreshed live.');
+    }else{
+      window.__indaneCloudLoadedOnce=true;
+      await saveCloudState(true);cloudReady=true;
+      setCloudStatus('Supabase repository initialized from this portal. '+cloudDataCounts(),true);
+      msg('Supabase data loaded/initialized. Common repository created.');
+    }
+  }catch(e){
+    cloudReady=false;window.__indaneCloudLoadedOnce=false;
+    setCloudStatus('Failed: '+String(e.message||e).slice(0,260)+'. Cloud save is locked to protect shared data.',false);
+    msg('Supabase sync failed. Local mode active; shared cloud data will not be overwritten.');
+  }finally{cloudLoading=false}
+}
+async function saveCloudState(force=false){
+  if(!user||!SUPABASE_URL||!SUPABASE_ANON_KEY)return;
+  if(!force&&!window.__indaneCloudLoadedOnce){
+    setCloudStatus('Local changes pending. Cloud save locked until Load Cloud or Cloud Test succeeds.',false);
+    return;
+  }
+  let body={id:CLOUD_STATE_ID,data:portalStatePayload(),updated_by:user.id,updated_at:new Date().toISOString()};
+  try{
+    await cloudRequest('portal_state?on_conflict=id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(body)});
+    cloudReady=true;window.__indaneCloudLoadedOnce=true;
+    setCloudStatus('Saved to Supabase at '+new Date().toLocaleString('en-IN')+' by '+user.id+'. '+cloudDataCounts(),true);
+    if(force)msg('Common Supabase repository updated.');
+  }catch(e){
+    cloudReady=false;
+    setCloudStatus('Save failed: '+String(e.message||e).slice(0,260),false);
+    if(force)alert('Supabase save failed. Please check setup SQL, anon policies and internet.\n'+e.message);
+  }
+}
+function save(){persistLocalState();if(window.__indaneCloudLoadedOnce||cloudReady)scheduleCloudSave();else setCloudStatus('Local save done. Cloud save locked until Supabase loads successfully.',false)}
+Object.assign(window,{loadCloudState,saveCloudState,save});
 </script>
 </body></html>
 
