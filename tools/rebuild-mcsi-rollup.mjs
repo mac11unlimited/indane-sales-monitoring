@@ -10,6 +10,7 @@ if (!files.length) {
 const MATERIAL_PRODUCTS = {
   DOM_14_2_ALL: { kg: 14.2 },
   DOM_14_2_NONSUB: { kg: 14.2 },
+  DOM_5_HOUSEHOLD: { kg: 5 },
   NDNE_ALL: { kg: 14.2 },
   NDNE_19: { kg: 19 },
   NDNE_47_5: { kg: 47.5 },
@@ -210,7 +211,8 @@ function classifyMaterial(code, desc) {
   const joined = `${c} ${String(desc || "").toUpperCase()}`;
   let product = MATERIAL_CODE_PRODUCT[c] || "";
   if (!product) {
-    if (/14[., ]?2|DOM.*HH|HOUSEHOLD|DOMESTIC/.test(joined)) product = "DOM_14_2_NONSUB";
+    if (/PROPANE\s+NON\s+DOMESTIC/.test(joined)) product = "";
+    else if (/14[., ]?2/.test(joined) || /DOM.*HH/.test(joined)) product = "DOM_14_2_NONSUB";
     else if (/XTRA.*TEJ.*47|47\.5.*XTRA/.test(joined)) product = "XTRATEJ_47_5";
     else if (/XTRA.*TEJ|XTRATEJ/.test(joined)) product = "XTRATEJ_19";
     else if (/NANOCUT/.test(joined)) product = "NANOCUT_19";
@@ -219,9 +221,34 @@ function classifyMaterial(code, desc) {
     else if (/10.*COMPOSITE|XTRALITE/.test(joined)) product = "COMPOSITE_10";
     else if (/\b2\b.*(FTL|POINT OF SALE|POS)|\b2\s*KG/.test(joined)) product = "FTL_2";
     else if (/\b5\b.*(FTL|POINT OF SALE|POS)|5\.0.*(FTL|POINT OF SALE|POS)/.test(joined)) product = "FTL_5";
+    else if (/\b5(?:\.0)?\s*KG.*(DOM|HOUSEHOLD|H\/H|N\/SUB)/.test(joined)) product = "DOM_5_HOUSEHOLD";
     else if (/\b19\b/.test(joined)) product = "NDNE_19";
   }
   return { product, keys: productRollupKeys(product), returnFlag: isReturnMaterialText(joined) };
+}
+
+function deleteDates(dates) {
+  for (const date of dates) {
+    const month = date.slice(0, 7);
+    delete out.day_mt[date];
+    delete out.plant_day_mt[date];
+    delete out.ido_day_mt[date];
+    delete out.plant_ido_day_mt[date];
+    for (const group of [out.product_day_mt, out.product_plant_day_mt, out.product_ido_day_mt, out.product_plant_ido_day_mt]) {
+      for (const store of Object.values(group || {})) delete store[date];
+    }
+    out.month_mt[month] = 0;
+  }
+}
+
+function recomputeMonths(dates) {
+  const months = [...new Set([...dates].map((d) => d.slice(0, 7)))];
+  for (const month of months) {
+    let total = 0;
+    for (const [date, mt] of Object.entries(out.day_mt)) if (date.startsWith(`${month}-`)) total += Number(mt) || 0;
+    if (total) out.month_mt[month] = total;
+    else delete out.month_mt[month];
+  }
 }
 
 function cleanPlantName(p) {
@@ -264,6 +291,8 @@ function processWorkbook(file) {
   const rows = readXlsxRows(file);
   const hidx = Math.max(0, rows.findIndex((r) => r.some((c) => /date/i.test(String(c || ""))) && r.some((c) => /net|kg|mt|cylinder|qty|quantity/i.test(String(c || "")))));
   const heads = uniqueHeaders((rows[hidx] || []).map((h) => String(h || "").trim()));
+  const parsedRows = [];
+  const fileDates = new Set();
   for (const vals of rows.slice(hidx + 1)) {
     out.rows++;
     const row = {};
@@ -291,7 +320,13 @@ function processWorkbook(file) {
     if (!date || !month || !mt) continue;
     if (mt < 0) out.negativeRows++;
     if (cls.returnFlag) out.returnRows++;
+    if (cls.returnFlag && mt > 0) mt = -Math.abs(mt);
     const ido = salesOfficeToIdo(salesOffice, region);
+    parsedRows.push({ date, month, mt, plant, ido, cls });
+    fileDates.add(date);
+  }
+  deleteDates(fileDates);
+  for (const { date, month, mt, plant, ido, cls } of parsedRows) {
     for (const key of cls.keys) {
       addProductMetric(out.product_day_mt, key, date, "", "", mt);
       if (plant) addProductMetric(out.product_plant_day_mt, key, date, plant, "", mt);
@@ -307,6 +342,7 @@ function processWorkbook(file) {
     }
     out.detectedRows++;
   }
+  recomputeMonths(fileDates);
 }
 
 for (const file of files) processWorkbook(file);
