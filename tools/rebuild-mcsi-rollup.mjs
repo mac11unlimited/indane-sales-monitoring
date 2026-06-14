@@ -41,6 +41,10 @@ const MATERIAL_CODE_PRODUCT = {
 };
 
 const out = {
+  meta: {
+    version: "mcsi-static-20260614-sap-net-v3",
+    source: "MCSI static rollup with SAP net-weight reconciliation",
+  },
   month_mt: {},
   day_mt: {},
   plant_day_mt: {},
