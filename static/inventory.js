@@ -65,3 +65,128 @@
   function initInventory(){Object.assign(window,{renderInventory,saveInventoryEntry,clearInventoryEntry,updateInventoryInterlock,verifyInventoryDay,uploadYm89,saveYm89Entry,approveInventoryEntry,startInventoryVoice,stopInventoryVoice});try{ensureInventoryRoles()}catch(e){window.__inventoryInitError='roles: '+e.message}try{ensureInventoryNav()}catch(e){window.__inventoryInitError='nav: '+e.message}try{ensureInventorySection()}catch(e){window.__inventoryInitError='section: '+e.message}try{installInventoryOverrides()}catch(e){window.__inventoryInitError='overrides: '+e.message}try{installInventoryChatHelp()}catch(e){}try{setInventoryDefaults();updateInvoiceDatalist();renderInventory();applyInventoryUi()}catch(e){window.__inventoryInitError='render: '+e.message}}
   initInventory();
 })();
+
+(function(){
+  const PLANT_NAMES=['Loni BP','Aligarh BP','Haridwar BP','Kashipur BP','Karnal BP'];
+  window.truckMaster=JSON.parse(localStorage.indaneTruckMaster||'[]');
+  window.vendorMaster=JSON.parse(localStorage.indaneVendorMaster||'[]');
+  window.pcimMailLog=JSON.parse(localStorage.indanePcimMailLog||'[]');
+  window.pcimVerifySummaries=JSON.parse(localStorage.indanePcimVerifySummaries||'[]');
+
+  function e(id){return document.getElementById(id)}
+  function esc(s){return String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;')}
+  function norm(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'')}
+  function n(v){let x=parseFloat(String(v??'').replace(/,/g,''));return Number.isFinite(x)?x:0}
+  function todayKey(){return typeof today==='string'?today:new Date().toISOString().slice(0,10)}
+  function canEditMasters(){return !!user&&!isReadOnly()&&(['ADMIN','UPSO_II','IDO_NOIDA','IDO_DEHRADUN','SND_USER'].includes(user.role)||String(user.role||'').startsWith('PLANT_'))}
+  function plantForRole(){try{return typeof plantFromRole==='function'?plantFromRole():'All Plants'}catch(_){return'All Plants'}}
+  function cleanTruck(v){return String(v||'').toUpperCase().replace(/[^A-Z0-9]/g,'')}
+  function truckInfo(no){let t=cleanTruck(no);return (truckMaster||[]).find(r=>cleanTruck(r.truckNo)===t)||null}
+  function vendorInfo(code,name){let c=String(code||'').replace(/^0+/,'');let nm=norm(name);return (vendorMaster||[]).find(v=>(c&&String(v.vendorCode||'').replace(/^0+/,'')===c)||(nm&&norm(v.vendorName)===nm))||null}
+  function csvRows(rows){return rows.map(r=>r.map(c=>'"'+String(c??'').replaceAll('"','""')+'"').join(',')).join('\n')}
+  function downloadRows(name,rows){download(name,csvRows(rows))}
+  function col(row,names){let ks=Object.keys(row), wants=names.map(norm);let k=ks.find(x=>wants.includes(norm(x)))||ks.find(x=>wants.some(w=>norm(x).includes(w)));return k?row[k]:''}
+  async function fileMatrix(inputId){let f=e(inputId)?.files?.[0];if(!f)throw new Error('Select file first.');let name=f.name.toLowerCase();if(name.endsWith('.xlsx')||name.endsWith('.xlsm'))return await parseXlsxRows(f);return parseDelimitedRows(await readTextSmart(f))}
+  function objectsFromMatrix(matrix){let hAt=matrix.findIndex(r=>(r||[]).filter(x=>String(x||'').trim()).length>=2);if(hAt<0)return[];let heads=uniqueHeaders(matrix[hAt].map(x=>String(x||'').trim()||'Column'));return matrix.slice(hAt+1).map(r=>{let o={};heads.forEach((h,i)=>o[h]=r[i]??'');return o}).filter(o=>Object.values(o).some(v=>String(v||'').trim()))}
+  function normalizeTruckRows(rows){
+    return rows.map(r=>({truckNo:cleanTruck(col(r,['Truck No','TT No','Vehicle','Vehicle No','Registration No'])),vendorCode:String(col(r,['Vendor Code','Transporter Code','TPT Code'])).trim(),vendorName:String(col(r,['Vendor Name','Transporter','Transporter Name','Vendor'])).trim(),plant:String(col(r,['Plant','Planning Point','Location'])).trim(),capacity:Math.round(n(col(r,['Capacity','Cylinder Capacity','Cap']))||342),mobile:String(col(r,['Mobile','Phone'])).trim(),email:String(col(r,['Email','Mail'])).trim()})).filter(r=>r.truckNo);
+  }
+  function normalizeVendorRows(rows){
+    return rows.map(r=>({vendorCode:String(col(r,['Vendor Code','Transporter Code','TPT Code'])).trim(),vendorName:String(col(r,['Vendor Name','Transporter','Transporter Name','Vendor'])).trim(),plant:String(col(r,['Plant','Location'])).trim(),type:String(col(r,['Type','Category','Own Use/TPT'])).trim()||'TPT',mobile:String(col(r,['Mobile','Phone'])).trim(),email:String(col(r,['Email','Mail'])).trim()})).filter(r=>r.vendorCode||r.vendorName);
+  }
+  async function uploadTruckMaster(){if(!canEditMasters())return alert('Only Admin/UPSO-II/IDO/Plant/S&D users can upload truck master.');let rows=normalizeTruckRows(objectsFromMatrix(await fileMatrix('truckMasterUpload')));if(!rows.length)return alert('No truck rows found. Required minimum: Truck No, Vendor/Transporter, Plant.');let by=new Map((truckMaster||[]).map(r=>[cleanTruck(r.truckNo),r]));rows.forEach(r=>by.set(cleanTruck(r.truckNo),r));truckMaster=[...by.values()].sort((a,b)=>a.truckNo.localeCompare(b.truckNo));save();renderPcimMasterTables();refreshTruckDatalist();alert('Truck Master uploaded/updated: '+rows.length+' rows. Total trucks: '+truckMaster.length)}
+  async function uploadVendorMaster(){if(!canEditMasters())return alert('Only Admin/UPSO-II/IDO/Plant/S&D users can upload vendor master.');let rows=normalizeVendorRows(objectsFromMatrix(await fileMatrix('vendorMasterUpload')));if(!rows.length)return alert('No vendor rows found. Required minimum: Vendor Code or Vendor Name.');let by=new Map((vendorMaster||[]).map(r=>[(String(r.vendorCode||'').replace(/^0+/,'')||norm(r.vendorName)),r]));rows.forEach(r=>by.set(String(r.vendorCode||'').replace(/^0+/,'')||norm(r.vendorName),r));vendorMaster=[...by.values()].sort((a,b)=>String(a.vendorName).localeCompare(String(b.vendorName)));save();renderPcimMasterTables();alert('Vendor Master uploaded/updated: '+rows.length+' rows. Total vendors: '+vendorMaster.length)}
+  function downloadTruckMaster(){downloadRows('truck-master.csv',[['Truck No','Vendor Code','Transporter Name','Plant','Capacity','Mobile','Email'],...(truckMaster||[]).map(r=>[r.truckNo,r.vendorCode,r.vendorName,r.plant,r.capacity,r.mobile,r.email])])}
+  function downloadVendorMaster(){downloadRows('vendor-master.csv',[['Vendor Code','Transporter Name','Plant','Type','Mobile','Email'],...(vendorMaster||[]).map(r=>[r.vendorCode,r.vendorName,r.plant,r.type,r.mobile,r.email])])}
+  function renderPcimMasterTables(){
+    if(e('truckMasterTable'))e('truckMasterTable').innerHTML='<tr><th>Truck No</th><th>Vendor Code</th><th>Transporter</th><th>Plant</th><th>Capacity</th><th>Contact</th></tr>'+(truckMaster||[]).map(r=>'<tr><td><b>'+esc(r.truckNo)+'</b></td><td>'+esc(r.vendorCode)+'</td><td>'+esc(r.vendorName)+'</td><td>'+esc(r.plant)+'</td><td>'+esc(r.capacity)+'</td><td>'+esc(r.mobile||r.email||'')+'</td></tr>').join('');
+    if(e('vendorMasterTable'))e('vendorMasterTable').innerHTML='<tr><th>Vendor Code</th><th>Transporter</th><th>Plant</th><th>Type</th><th>Contact</th></tr>'+(vendorMaster||[]).map(r=>'<tr><td>'+esc(r.vendorCode)+'</td><td><b>'+esc(r.vendorName)+'</b></td><td>'+esc(r.plant)+'</td><td>'+esc(r.type)+'</td><td>'+esc(r.mobile||r.email||'')+'</td></tr>').join('');
+  }
+  function ensureMastersUi(){
+    let master=e('master');if(!master||e('pcimMastersCard'))return;
+    master.insertAdjacentHTML('beforeend','<div id="pcimMastersCard" class="grid cols2"><div class="card"><h2>Truck Master</h2><p class="small">Used in PCIM. Security can select only these truck numbers.</p><div class="toolbar"><input id="truckMasterUpload" type="file" accept=".xlsx,.xls,.xlsm,.csv,.txt,.tsv"><button class="orange" onclick="uploadTruckMaster()">Upload Truck Master</button><button onclick="downloadTruckMaster()">Download Truck Master</button></div><div class="scroll" style="max-height:320px"><table id="truckMasterTable"></table></div></div><div class="card"><h2>Vendor / Transporter Master</h2><p class="small">Transporter is auto-filled after selecting truck number.</p><div class="toolbar"><input id="vendorMasterUpload" type="file" accept=".xlsx,.xls,.xlsm,.csv,.txt,.tsv"><button class="orange" onclick="uploadVendorMaster()">Upload Vendor Master</button><button onclick="downloadVendorMaster()">Download Vendor Master</button></div><div class="scroll" style="max-height:320px"><table id="vendorMasterTable"></table></div></div></div>');
+    renderPcimMasterTables();
+  }
+  function refreshTruckDatalist(){
+    let dl=e('invTruckList');if(!dl){dl=document.createElement('datalist');dl.id='invTruckList';document.body.appendChild(dl)}
+    dl.innerHTML=(truckMaster||[]).map(r=>'<option value="'+esc(r.truckNo)+'">'+esc([r.vendorName,r.plant,r.capacity+' cyl'].filter(Boolean).join(' | '))+'</option>').join('');
+    if(e('invTruck')){invTruck.setAttribute('list','invTruckList');invTruck.setAttribute('autocomplete','off')}
+  }
+  function totalCylFromInvoice(info){if(!info)return 0;let keys=['domesticCylinders','cylinders','totalCylinders','qty','quantity'];let v=keys.map(k=>n(info[k])).find(x=>x>0);if(v)return Math.round(v);let loads=n(info.loads)||n(info.load)||0;return loads?Math.round(loads*360):0}
+  function invoiceInfoExt(no){let key=String(no||'').trim().toUpperCase();return (invoiceRefs||[]).find(x=>String(x.invoiceNo||'').trim().toUpperCase()===key)||null}
+  function applyTruckInfo(){
+    let info=truckInfo(e('invTruck')?.value);if(!info)return;
+    let vendor=vendorInfo(info.vendorCode,info.vendorName);
+    if(e('invParty'))invParty.value=vendor?.vendorName||info.vendorName||invParty.value;
+    if(e('invPlant')&&info.plant&&plantForRole()==='All Plants')invPlant.value=info.plant;
+    if(e('invTruckMeta'))invTruckMeta.textContent='Master matched: '+info.truckNo+' | '+(vendor?.vendorName||info.vendorName||'Transporter not named')+' | '+(info.capacity||342)+' cyl';
+  }
+  function applyInvoiceInfo(sourceId){
+    let info=invoiceInfoExt(e(sourceId)?.value);if(!info)return;
+    if(e('invParty'))invParty.value=info.customerName||info.name||info.vendorName||invParty.value;
+    if(e('invTruck')&&info.vehicle){invTruck.value=cleanTruck(info.vehicle);applyTruckInfo()}
+    let cyl=totalCylFromInvoice(info);if(cyl&&e('inv_d14')&&(!+inv_d14.value||sourceId==='invDocNo'))inv_d14.value=cyl;
+    if(e('invInvoiceMeta'))invInvoiceMeta.textContent='Invoice matched: '+info.invoiceNo+' | '+(info.customerName||info.name||'')+' | '+cyl.toLocaleString('en-IN')+' cyl';
+  }
+  function gateTheme(){
+    let card=document.querySelector('.inv-entry-card'), move=e('invMove')?.value||'IN';if(!card)return;
+    card.classList.toggle('gate-in-mode',move==='IN');card.classList.toggle('gate-out-mode',move==='OUT');
+  }
+  function attachEntryEvents(){
+    refreshTruckDatalist();
+    if(e('invTruck')&&!invTruck.dataset.pcimMaster){invTruck.dataset.pcimMaster='1';invTruck.insertAdjacentHTML('afterend','<div id="invTruckMeta" class="small inv-meta"></div>');invTruck.addEventListener('input',()=>{applyTruckInfo();gateTheme()});invTruck.addEventListener('change',applyTruckInfo)}
+    ['invDocNo','invLinkedInvoice'].forEach(id=>{let x=e(id);if(x&&!x.dataset.pcimInvoice){x.dataset.pcimInvoice='1';x.addEventListener('input',()=>applyInvoiceInfo(id));x.addEventListener('change',()=>applyInvoiceInfo(id));if(id==='invDocNo')x.insertAdjacentHTML('afterend','<div id="invInvoiceMeta" class="small inv-meta"></div>')}});
+    if(e('invMove')&&!invMove.dataset.pcimGate){invMove.dataset.pcimGate='1';invMove.addEventListener('change',gateTheme)}
+    gateTheme();
+  }
+  function movementRows(date,plant){return (inventoryRows||[]).filter(r=>(!date||r.date===date)&&(plant==='All Plants'||!plant||r.plant===plant))}
+  function ym89RefsFor(date,plant){return new Set((ym89Entries||[]).filter(r=>(!date||r.date===date)&&(plant==='All Plants'||r.plant===plant)).map(r=>String(r.ref||'').toUpperCase()))}
+  function pendingManualRows(date,plant){return movementRows(date,plant).filter(r=>r.move==='IN'&&/ERV|Manual/i.test((r.docType||'')+' '+(r.loadType||''))&&!r.manualSapAck)}
+  function pendingSdmsRows(date,plant){let refs=ym89RefsFor(date,plant);return movementRows(date,plant).filter(r=>r.move==='IN'&&/ERV/i.test(r.docType||'')&&r.linkedInvoice&&!r.ym89Ack&&(!r.docNo||!refs.has(String(r.docNo).toUpperCase())))}
+  function ackManualErv(id){let r=(inventoryRows||[]).find(x=>x.id===id);if(!r)return;if(!user||isReadOnly())return alert('View-only user cannot acknowledge ERV.');r.manualSapAck=true;r.manualSapAckBy=user.id;r.manualSapAckAt=new Date().toLocaleString('en-IN');save();renderInventory();recordAudit?.('PCIM_MANUAL_ERV_ACK',r.docNo||r.truck,'PCIM')}
+  function ackSdmsErv(id){let r=(inventoryRows||[]).find(x=>x.id===id);if(!r)return;if(!user||isReadOnly())return alert('View-only user cannot acknowledge ERV.');r.ym89Ack=true;r.ym89AckBy=user.id;r.ym89AckAt=new Date().toLocaleString('en-IN');save();renderInventory();recordAudit?.('PCIM_SDMS_ERV_ACK',r.docNo||r.truck,'PCIM')}
+  function renderPendingTables(){
+    let date=e('invDashDate')?.value||todayKey(),plant=e('invDashPlant')?.value||plantForRole(),man=pendingManualRows(date,plant),sdms=pendingSdmsRows(date,plant);
+    if(e('invManualPendingCount'))invManualPendingCount.textContent=man.length;
+    if(e('invSdmsPendingCount'))invSdmsPendingCount.textContent=sdms.length;
+    let rowHtml=(r,kind)=>'<tr><td>'+esc(r.date)+'</td><td>'+esc(r.plant)+'</td><td><b>'+esc(r.truck)+'</b></td><td>'+esc(r.docNo)+'</td><td>'+esc(r.linkedInvoice||'')+'</td><td>'+esc(r.party||'')+'</td><td>'+Object.values(r.cyl||{}).reduce((a,b)=>a+n(b),0).toLocaleString('en-IN')+'</td><td>'+esc(r.user)+'</td><td><button onclick="'+(kind==='manual'?'ackManualErv':'ackSdmsErv')+'(\''+r.id+'\')">S&D Ack</button></td></tr>';
+    if(e('pendingManualErvTable'))pendingManualErvTable.innerHTML='<tr><th>Date</th><th>Plant</th><th>Truck</th><th>Manual ERV</th><th>Linked Invoice</th><th>Party</th><th>Cylinders</th><th>Maker</th><th>Action</th></tr>'+man.map(r=>rowHtml(r,'manual')).join('');
+    if(e('pendingSdmsErvTable'))pendingSdmsErvTable.innerHTML='<tr><th>Date</th><th>Plant</th><th>Truck</th><th>SDMS ERV</th><th>Linked Invoice</th><th>Party</th><th>Cylinders</th><th>Maker</th><th>Action</th></tr>'+sdms.map(r=>rowHtml(r,'sdms')).join('');
+  }
+  function ensurePendingUi(){
+    if(!e('inventory')||e('pendingErvCard'))return;
+    let target=e('invCompareTable')?.closest('.card')||e('inventory').querySelector('.card:last-child');
+    target.insertAdjacentHTML('afterend','<div id="pendingErvCard" class="card"><h2>Pending ERV Control</h2><p class="small">Healthy target is nil Manual ERV pending, nil SDMS ERV pending, nil SAP vs physical mismatch.</p><div class="inv-kpis"><div class="inv-mini orange"><span>Manual ERV Pending</span><b id="invManualPendingCount">0</b></div><div class="inv-mini red"><span>SDMS ERV Pending</span><b id="invSdmsPendingCount">0</b></div></div><div class="toolbar no-print"><button class="orange" onclick="recordPendingErvMail(true)">Manual Pending ERV Mail Preview</button><button onclick="downloadPcimVerifySummary()">Download Verified Summary</button><button onclick="downloadPcimPreviousSummaries()">Previous Verified Summaries</button></div><h3>Pending Manual ERV</h3><div class="scroll"><table id="pendingManualErvTable" class="inv-table"></table></div><h3>Pending SDMS ERV Not Updated in YM89</h3><div class="scroll"><table id="pendingSdmsErvTable" class="inv-table"></table></div><h3>Pending ERV Mail / Action Log</h3><div class="scroll" style="max-height:220px"><table id="pcimMailLogTable" class="inv-table"></table></div></div>');
+  }
+  function plantRecipients(plant){let users=Object.entries(roles||{}).filter(([id,r])=>{let role=r[0],work=String(r[1]||'');return (role==='SND_USER'||String(role).startsWith('PLANT_'))&&(plant==='All Plants'||work.includes(plant)||String(role).toUpperCase().includes((plant||'').split(' ')[0].toUpperCase()))}).map(([id])=>id);return users.length?users.join(', '):'S&D Plant User - '+plant}
+  function recordPendingErvMail(force=false){
+    let date=e('invDashDate')?.value||todayKey(),plant=e('invDashPlant')?.value||plantForRole(),man=pendingManualRows(date,plant),sdms=pendingSdmsRows(date,plant),slot=new Date().getHours()>=11?'11 AM':new Date().getHours()>=9?'9 AM':'Manual',key=date+'|'+plant+'|'+slot;
+    if(!force&&pcimMailLog.some(x=>x.key===key))return;
+    if(!force&&!man.length&&!sdms.length)return;
+    pcimMailLog.unshift({key,at:new Date().toLocaleString('en-IN'),date,plant,to:plantRecipients(plant),manual:man.length,sdms:sdms.length,status:'Local preview / SMTP pending',subject:'Pending ERV Status - '+plant+' - '+ddmmyyyy(date,'.')});
+    pcimMailLog=pcimMailLog.slice(0,80);save();renderPcimMailLog();if(force)alert('Pending ERV mail preview recorded for '+plant+'. In online SMTP setup it will send to respective plant users at 9 AM and 11 AM.');
+  }
+  function renderPcimMailLog(){if(!e('pcimMailLogTable'))return;pcimMailLogTable.innerHTML='<tr><th>Time</th><th>Date</th><th>Plant</th><th>To</th><th>Manual Pending</th><th>SDMS Pending</th><th>Status</th></tr>'+(pcimMailLog||[]).slice(0,30).map(r=>'<tr><td>'+esc(r.at)+'</td><td>'+esc(r.date)+'</td><td>'+esc(r.plant)+'</td><td>'+esc(r.to)+'</td><td>'+r.manual+'</td><td>'+r.sdms+'</td><td>'+esc(r.status)+'</td></tr>').join('')}
+  function summaryFor(date,plant){let rows=movementRows(date,plant),man=pendingManualRows(date,plant),sdms=pendingSdmsRows(date,plant);return{date,plant,verifiedBy:user?.id||'',verifiedAt:new Date().toLocaleString('en-IN'),gateEntries:rows.length,manualPending:man.length,sdmsPending:sdms.length,totalIn:rows.filter(r=>r.move==='IN').length,totalOut:rows.filter(r=>r.move==='OUT').length}}
+  function downloadPcimVerifySummary(){let date=e('invDashDate')?.value||todayKey(),plant=e('invDashPlant')?.value||plantForRole(),s=summaryFor(date,plant);downloadRows('pcim-verified-summary-'+date+'.csv',[Object.keys(s),Object.values(s)])}
+  function downloadPcimPreviousSummaries(){downloadRows('pcim-previous-verified-summaries.csv',[['Date','Plant','Verified By','Verified At','Gate Entries','Manual Pending','SDMS Pending','Gate IN Trucks','Gate OUT Trucks'],...(pcimVerifySummaries||[]).map(s=>[s.date,s.plant,s.verifiedBy,s.verifiedAt,s.gateEntries,s.manualPending,s.sdmsPending,s.totalIn,s.totalOut])])}
+  function extendInventoryRender(){
+    const old=window.renderInventory;window.renderInventory=function(){old&&old();ensurePendingUi();attachEntryEvents();renderPendingTables();renderPcimMailLog();recordPendingErvMail(false)};
+  }
+  function extendSaves(){
+    const oldPersist=window.persistLocalState;window.persistLocalState=function(){oldPersist&&oldPersist();try{localStorage.indaneTruckMaster=JSON.stringify(truckMaster)}catch(_){}try{localStorage.indaneVendorMaster=JSON.stringify(vendorMaster)}catch(_){}try{localStorage.indanePcimMailLog=JSON.stringify(pcimMailLog)}catch(_){}try{localStorage.indanePcimVerifySummaries=JSON.stringify(pcimVerifySummaries)}catch(_){}};
+    const oldPayload=window.portalStatePayload;window.portalStatePayload=function(){let d=oldPayload?oldPayload():{};d.truckMaster=truckMaster;d.vendorMaster=vendorMaster;d.pcimMailLog=pcimMailLog;d.pcimVerifySummaries=pcimVerifySummaries;return d};
+    const oldApply=window.applyPortalState;window.applyPortalState=function(d){oldApply&&oldApply(d);truckMaster=d?.truckMaster||truckMaster;vendorMaster=d?.vendorMaster||vendorMaster;pcimMailLog=d?.pcimMailLog||pcimMailLog;pcimVerifySummaries=d?.pcimVerifySummaries||pcimVerifySummaries;window.truckMaster=truckMaster;window.vendorMaster=vendorMaster;persistLocalState();renderPcimMasterTables();refreshTruckDatalist()};
+  }
+  function extendActions(){
+    const oldSave=window.saveInventoryEntry;window.saveInventoryEntry=function(){let truck=cleanTruck(e('invTruck')?.value);if((truckMaster||[]).length&&!truckInfo(truck))return alert('Truck No. not found in Truck Master. Please select only approved truck number from dropdown.');if(!(truckMaster||[]).length)return alert('Truck Master is empty. Please upload Truck Master first in Masters section.');applyTruckInfo();return oldSave&&oldSave()};
+    const oldVerify=window.verifyInventoryDay;window.verifyInventoryDay=function(){let res=oldVerify&&oldVerify();let date=e('invDashDate')?.value||todayKey(),plant=e('invDashPlant')?.value||plantForRole();pcimVerifySummaries.unshift(summaryFor(date,plant));pcimVerifySummaries=pcimVerifySummaries.slice(0,120);save();renderPcimMailLog();return res};
+    const oldShow=window.show;window.show=function(id){oldShow&&oldShow(id);if(id==='master')ensureMastersUi();if(id==='inventory'){ensurePendingUi();attachEntryEvents();renderPendingTables();renderPcimMailLog()}};
+    const oldRenderAll=window.renderAll;window.renderAll=function(){oldRenderAll&&oldRenderAll();ensureMastersUi();renderPcimMasterTables()};
+  }
+  function initPcimExtension(){
+    Object.assign(window,{uploadTruckMaster,uploadVendorMaster,downloadTruckMaster,downloadVendorMaster,ackManualErv,ackSdmsErv,recordPendingErvMail,downloadPcimVerifySummary,downloadPcimPreviousSummaries});
+    ensureMastersUi();extendSaves();extendInventoryRender();extendActions();refreshTruckDatalist();attachEntryEvents();renderPendingTables();renderPcimMailLog();
+  }
+  initPcimExtension();
+})();
