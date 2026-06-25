@@ -109,7 +109,11 @@
   }
   function pct(x){return ((+x||0)*100).toFixed(1)+'%'}
   function fmt(x){return Math.round(+x||0).toLocaleString('en-IN')}
-  function aadhaarRowHtml(r,total=false){return'<tr class="'+(total?'aadh-total':r.level==='IDO'?'aadh-ido':'aadh-lsa')+'"><td>'+esc(total?'UPSO II Total':r.label)+'</td><td>'+fmt(r.A)+'</td><td>'+fmt(r.B)+'</td><td>'+fmt(r.C)+'</td><td>'+fmt(r.D)+'</td><td>'+fmt(r.E)+'</td><td>'+fmt(r.F)+'</td><td>'+pct(r.G)+'</td><td>'+pct(r.H)+'</td><td>'+pct(r.I)+'</td></tr>'}
+  function heatClass(x){x=+x||0;return x>=.85?'aadh-heat-good':x>=.7?'aadh-heat-watch':'aadh-heat-risk'}
+  function aadhaarRowHtml(r,total=false){
+    let cls=total?'aadh-total':(r.level==='IDO'?'aadh-ido ':'aadh-lsa ')+heatClass(r.I);
+    return'<tr class="'+cls+'"><td>'+esc(total?'UPSO II Total':r.label)+'</td><td>'+fmt(r.A)+'</td><td>'+fmt(r.B)+'</td><td>'+fmt(r.C)+'</td><td>'+fmt(r.D)+'</td><td>'+fmt(r.E)+'</td><td>'+fmt(r.F)+'</td><td>'+pct(r.G)+'</td><td>'+pct(r.H)+'</td><td>'+pct(r.I)+'</td></tr>'
+  }
   function setAadhaarDashRange(which,value){
     let d=isoDate(value);if(!d)return;
     aadhaarDashRange={...(aadhaarDashRange||{}),[which]:d};
@@ -120,6 +124,19 @@
     try{localStorage.indaneAadhaarDashRange=JSON.stringify(aadhaarDashRange)}catch(_){}
     renderDashboard();
   }
+  function aadhaarCompletionPanel(top){
+    let max=Math.max(1,...top.map(r=>r.I));
+    let bars='<div class="aadh-bars">'+top.map(r=>'<div class="'+heatClass(r.I)+'"><span>'+esc(r.label)+'</span><i><b style="width:'+Math.max(3,r.I/max*100)+'%"></b></i><strong>'+pct(r.I)+'</strong></div>').join('')+'</div>';
+    return '<div class="aadh-panel aadh-full"><h3>IDO-wise eKYC Completion</h3>'+bars+'<p class="small">Darker IDO rows and heat colors highlight lower Aadhaar authentication achievement. Red means urgent follow-up, amber means watch, green means comparatively healthy.</p></div>';
+  }
+  function aadhaarTrendHtml(selectedReports){
+    let idos=['Agra IDO','Bareilly IDO','Dehradun IDO','Noida IDO'];
+    let rows=selectedReports.map(([d])=>{
+      let dayRows=aggregateReports(d,d).filter(r=>r.level==='IDO'),map={};dayRows.forEach(r=>map[r.label]=r);
+      return '<tr><td class="aadh-date">'+dateLabel(d)+'</td>'+idos.map(ido=>{let r=map[ido]||{I:0,F:0,C:0};return '<td class="'+heatClass(r.I)+'"><div class="aadh-trend-cell"><b>'+pct(r.I)+'</b><span>'+fmt(r.F)+' / '+fmt(r.C)+'</span></div></td>'}).join('')+'</tr>';
+    }).join('');
+    return '<div class="aadh-panel aadh-full"><h3>Aadhaar Authentication % Trend - IDO-wise</h3><div class="scroll"><table class="report aadh-trend"><tr><th>Date</th>'+idos.map(x=>'<th>'+x+'</th>').join('')+'</tr>'+rows+'</table></div><p class="small">Each cell shows eKYC completed percentage, with completed / customer strength beneath it, for the selected Aadhaar date range.</p></div>';
+  }
   function aadhaarDashboardHtml(){
     normalizeAadhaarReports();
     let available=Object.keys(aadhaarReports||{}).sort(),latest=available.at(-1)||localToday();
@@ -128,9 +145,8 @@
     total.C=total.A+total.B;total.F=total.D+total.E;total.G=total.A?total.D/total.A:0;total.H=total.B?total.E/total.B:0;total.I=total.C?total.F/total.C:0;
     let status=available.length?'Available report dates: '+available.map(dateLabel).join(', '):'No Aadhaar Authentication report uploaded yet.';
     let rangeStatus=selectedReports.length?'<span class="aadh-ok">Showing '+selectedReports.length+' uploaded report date(s): '+selectedReports.map(([d])=>dateLabel(d)).join(', ')+'</span>':'<span class="aadh-miss">No Aadhaar Authentication upload found for '+dateLabel(from)+' to '+dateLabel(to)+'. Upload the report for this date/range or change selection.</span>';
-    let top=rows.filter(r=>r.level==='IDO'),max=Math.max(1,...top.map(r=>r.I));
-    let bars='<div class="aadh-bars">'+top.map(r=>'<div><span>'+esc(r.label)+'</span><i><b style="width:'+Math.max(3,r.I/max*100)+'%"></b></i><strong>'+pct(r.I)+'</strong></div>').join('')+'</div>';
-    return '<div class="card aadh-card"><div class="aadh-head"><h2>Aadhaar Authentication Report</h2><p>PMUY / Non-PMUY customer strength and eKYC completion, generated automatically from uploaded Sheet1 raw data.</p></div><div class="toolbar no-print"><b>Date Range</b><input id="aadhaarDashFrom" type="date" class="field" style="max-width:160px" value="'+from+'" onchange="setAadhaarDashRange(\'from\',this.value)"><input id="aadhaarDashTo" type="date" class="field" style="max-width:160px" value="'+to+'" onchange="setAadhaarDashRange(\'to\',this.value)"><button onclick="exportTable(\'aadhaarReportTable\',\'aadhaar-authentication-report.csv\')">Download Aadhaar Report</button><span class="small">'+status+'</span></div><div class="aadh-range">'+rangeStatus+'</div><div class="aadh-kpis"><div><span>Total Customer Strength</span><b>'+fmt(total.C)+'</b></div><div><span>eKYC Completed</span><b>'+fmt(total.F)+'</b></div><div><span>Total Completion</span><b>'+pct(total.I)+'</b></div><div><span>PMUY Completion</span><b>'+pct(total.G)+'</b></div></div><div class="aadh-grid"><div class="scroll"><table id="aadhaarReportTable" class="report aadh-table"><tr><th rowspan="2">IDO / LSA</th><th colspan="3">Customer Strength</th><th colspan="3">eKYC Completed</th><th colspan="3">Achievement %</th></tr><tr><th>PMUY</th><th>nPMUY</th><th>Total</th><th>PMUY</th><th>nPMUY</th><th>Total</th><th>PMUY %</th><th>nPMUY %</th><th>Total %</th></tr>'+rows.map(r=>aadhaarRowHtml(r,false)).join('')+aadhaarRowHtml(total,true)+'</table></div><div class="aadh-panel"><h3>IDO-wise eKYC Completion</h3>'+bars+'<p class="small">Filters applied: Customer Type PMUY group / Non-PMUY, Subsidy BTC/CTC for strength, biometric methods for eKYC completed.</p></div></div></div>';
+    let top=rows.filter(r=>r.level==='IDO');
+    return '<div class="card aadh-card"><div class="aadh-head"><h2>Aadhaar Authentication Report</h2><p>PMUY / Non-PMUY customer strength and eKYC completion, generated automatically from uploaded Sheet1 raw data.</p></div><div class="toolbar no-print"><b>Date Range</b><input id="aadhaarDashFrom" type="date" class="field" style="max-width:160px" value="'+from+'" onchange="setAadhaarDashRange(\'from\',this.value)"><input id="aadhaarDashTo" type="date" class="field" style="max-width:160px" value="'+to+'" onchange="setAadhaarDashRange(\'to\',this.value)"><button onclick="exportTable(\'aadhaarReportTable\',\'aadhaar-authentication-report.csv\')">Download Aadhaar Report</button><span class="small">'+status+'</span></div><div class="aadh-range">'+rangeStatus+'</div><div class="aadh-kpis"><div><span>Total Customer Strength</span><b>'+fmt(total.C)+'</b></div><div><span>eKYC Completed</span><b>'+fmt(total.F)+'</b></div><div><span>Total Completion</span><b>'+pct(total.I)+'</b></div><div><span>PMUY Completion</span><b>'+pct(total.G)+'</b></div></div><div class="scroll aadh-table-wrap"><table id="aadhaarReportTable" class="report aadh-table"><tr><th rowspan="2">IDO / LSA</th><th colspan="3">Customer Strength</th><th colspan="3">eKYC Completed</th><th colspan="3">Achievement %</th></tr><tr><th>PMUY</th><th>nPMUY</th><th>Total</th><th>PMUY</th><th>nPMUY</th><th>Total</th><th>PMUY %</th><th>nPMUY %</th><th>Total %</th></tr>'+rows.map(r=>aadhaarRowHtml(r,false)).join('')+aadhaarRowHtml(total,true)+'</table></div>'+aadhaarCompletionPanel(top)+aadhaarTrendHtml(selectedReports)+'</div>';
   }
   function renderAadhaarUploadStatus(){
     normalizeAadhaarReports();
