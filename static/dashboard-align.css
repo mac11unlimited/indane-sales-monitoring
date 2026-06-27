@@ -1,0 +1,23 @@
+#dashBody .report th,
+#dashBody .report td:not(:first-child){
+  text-align:center!important;
+  vertical-align:middle!important;
+  font-variant-numeric:tabular-nums;
+}
+#dashBody .report td:first-child{
+  vertical-align:middle!important;
+}
+#dashBody .aadh-table td:first-child,
+#dashBody .dac-table td:first-child,
+#dashBody .plant-matrix td.p-name,
+#dashBody .plant-matrix td.p-state,
+#dashBody .dac-trend td:first-child,
+#dashBody .aadh-trend td:first-child{
+  text-align:left!important;
+}
+#dashBody .plant-matrix td.p-num,
+#dashBody .aadh-table td,
+#dashBody .dac-table td,
+#dashBody .bulk-stock-table td{
+  text-align:center!important;
+}
