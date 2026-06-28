@@ -86,7 +86,23 @@
     }catch(err){qrStatus('Failed scan/retry: '+esc(err.message||err),'qr-bad')}
   }
   function exportInvoiceQr(){let rows=[['Scan Time','Status','SAP Doc No','TT Number','Distributor Code','Distributor Name','Delivery Number','Sales Order Number','Invoice Date','Invoice Time','Cylinders','Scanned By','Gate'],...(invoiceQrScans||[]).filter(qrPlantAllowed).map(r=>[r.scan_time,r.scan_status,r.sap_doc_no,r.tt_number,r.distributor_code,r.distributor_name,r.delivery_number,r.sales_order_number,r.invoice_date,r.invoice_time,(r.cylinders||[]).map(c=>c.material_code+' '+c.quantity+' '+c.unit).join('; '),r.scanned_by,r.gate_name])];download('invoice-qr-scans.csv',rows.map(r=>r.map(c=>'"'+String(c??'').replaceAll('"','""')+'"').join(',')).join('\n'))}
+  function prepareGateOutQrScan(){
+    if(!canQrScan())return alert('Only Security Guard / Plant / S&D / Admin can scan invoice QR.');
+    if(e('invMove'))invMove.value='OUT';
+    if(e('invDocType'))invDocType.value='Invoice';
+    if(e('invLoadType'))invLoadType.value='Filled LPG Cylinders OUT';
+    try{updateInventoryInterlock()}catch(_){}
+    openInvoiceQrScanner();
+  }
+  function ensureGateOutQrButton(){
+    let card=document.querySelector('#inventory .inv-entry-card');
+    if(!card||e('gateOutQrToolbar'))return;
+    let anchor=card.querySelector('.inv-voicebar')||card.querySelector('.inv-help-strip')||card.querySelector('h2');
+    if(!anchor)return;
+    anchor.insertAdjacentHTML('afterend','<div id="gateOutQrToolbar" class="qr-gateout-panel no-print"><div><b>Gate OUT Invoice QR Entry</b><span>Scan bill QR to auto-fill invoice no., TT no., distributor, date/time and cylinder quantities.</span></div><button class="qr-gateout-btn" onclick="prepareGateOutQrScan()">Scan Invoice QR for Gate OUT</button></div>');
+  }
   function ensureInvoiceQrUi(){
+    ensureGateOutQrButton();
     if(!e('inventory')||e('invoiceQrCard'))return;
     let host=e('inventory')?.querySelector('.inv-board');if(!host)return;
     host.insertAdjacentHTML('beforeend','<div id="invoiceQrCard" class="card qr-card"><div class="qr-head"><h2>Invoice QR Scanner</h2><p>Scan IOCL Tax Invoice QR to extract only SAP Doc, TT, Distributor, Delivery/SO, date/time and cylinder quantities.</p></div><div class="qr-actions no-print"><button class="qr-scan-btn" onclick="openInvoiceQrScanner()">Scan Invoice QR</button><input id="qrFile" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.txt,.csv"><button onclick="scanInvoiceQrFile()">Upload PDF/Image Fallback</button><input id="qrFilterDate" type="date" class="field" style="max-width:160px" onchange="renderInvoiceQr()"><input id="qrFilterText" class="field" style="max-width:240px" placeholder="Search TT / SAP / Distributor" oninput="renderInvoiceQr()"><button onclick="exportInvoiceQr()">Export QR Report</button></div><div class="qr-kpis"><div class="qr-mini green"><span>Today Scans</span><b id="qrToday">0</b></div><div class="qr-mini green"><span>Successful</span><b id="qrSuccess">0</b></div><div class="qr-mini red"><span>Duplicate Attempts</span><b id="qrDuplicate">0</b></div><div class="qr-mini orange"><span>Failed</span><b id="qrFailed">0</b></div></div><div class="scroll"><table id="qrHistoryTable" class="qr-history report"></table></div><div id="qrFileReader" style="display:none"></div></div><div id="invoiceQrModal" class="qr-modal hide"><div class="qr-modal-body"><div class="qr-modal-head"><b>Scan Invoice QR / बिल QR स्कैन करें</b><button class="qr-close" onclick="closeInvoiceQrScanner()">Close</button></div><div id="qrStatus" class="qr-status qr-warn">Ready.</div><div id="qrReader" class="qr-reader"></div><div id="qrConfirm" class="qr-confirm"></div></div></div>');
@@ -96,10 +112,10 @@
     const oldPersist=window.persistLocalState;window.persistLocalState=function(){oldPersist&&oldPersist();try{localStorage.indaneInvoiceQrScans=JSON.stringify(invoiceQrScans)}catch(_){}};
     const oldPayload=window.portalStatePayload;window.portalStatePayload=function(){let d=oldPayload?oldPayload():{};d.invoiceQrScans=invoiceQrScans;return d};
     const oldApply=window.applyPortalState;window.applyPortalState=function(d){oldApply&&oldApply(d);invoiceQrScans=d?.invoiceQrScans||invoiceQrScans;window.invoiceQrScans=invoiceQrScans;persistLocalState();renderInvoiceQr()};
-    const oldRender=window.renderInventory;window.renderInventory=function(){oldRender&&oldRender();ensureInvoiceQrUi();renderInvoiceQr()};
-    const oldShow=window.show;window.show=function(id){oldShow&&oldShow(id);if(id==='inventory'){ensureInvoiceQrUi();renderInvoiceQr()}};
-    const oldAll=window.renderAll;window.renderAll=function(){oldAll&&oldAll();ensureInvoiceQrUi();renderInvoiceQr()};
+    const oldRender=window.renderInventory;window.renderInventory=function(){oldRender&&oldRender();ensureInvoiceQrUi();ensureGateOutQrButton();renderInvoiceQr()};
+    const oldShow=window.show;window.show=function(id){oldShow&&oldShow(id);if(id==='inventory'){ensureInvoiceQrUi();ensureGateOutQrButton();renderInvoiceQr()}};
+    const oldAll=window.renderAll;window.renderAll=function(){oldAll&&oldAll();ensureInvoiceQrUi();ensureGateOutQrButton();renderInvoiceQr()};
   }
-  Object.assign(window,{invoiceQrParser,invoiceQrDuplicateCheck:duplicateCheck,openInvoiceQrScanner,closeInvoiceQrScanner,stopInvoiceQrScanner,scanInvoiceQrFile,saveInvoiceQrScan,autoFillGateFromQr,renderInvoiceQr,deleteInvoiceQr,exportInvoiceQr});
-  installInvoiceQr();ensureInvoiceQrUi();renderInvoiceQr();
+  Object.assign(window,{invoiceQrParser,invoiceQrDuplicateCheck:duplicateCheck,prepareGateOutQrScan,openInvoiceQrScanner,closeInvoiceQrScanner,stopInvoiceQrScanner,scanInvoiceQrFile,saveInvoiceQrScan,autoFillGateFromQr,renderInvoiceQr,deleteInvoiceQr,exportInvoiceQr});
+  installInvoiceQr();ensureInvoiceQrUi();ensureGateOutQrButton();renderInvoiceQr();
 })();
