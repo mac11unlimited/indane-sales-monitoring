@@ -1,0 +1,105 @@
+(function(){
+  window.invoiceQrScans=JSON.parse(localStorage.indaneInvoiceQrScans||'[]');
+  let qrScanner=null, qrDraft=null;
+  const MATERIAL_MAP={
+    M00087:'14.2 kg NON SUB. DOM. H.HOLD CYLINDER',M00089:'14.2 kg N/S DOM.HH CYLINDER SM LOAD RETR',M00090:'14.2 kg N/S DOM. HH RET. CYLINDER SUB LD',
+    M00002:'19 kg PACKED LPG CYLINDER',M00010:'19 kg DEFECTIVE SAME LOAD RETURN SBOM',M00011:'19 kg DEFECTIVE SUBSEQUENT LOAD RETURN',
+    M00065:'47.5kg PACKED LPG CYLINDER (SC VALVE)',M00069:'47.5kg PACKED LPG CYLINDER (LOT VALVE)',M00071:'47.5kg DEFECTIVE SAME LOAD RETN (LOT)',
+    M00104:'5.0 kg PCKD N/SUB DOM CYLINDER HOUSEHOLD',M00215:'5 kg ND CYLINDER - NEW FTL',M00217:'5 kg ND CYLINDER FTL NEW(Point of Sale)',M00140:'425 kg PACKED LPG CYLINDER'
+  };
+  function e(id){return document.getElementById(id)}
+  function esc(s){return String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;')}
+  function clean(s){return String(s||'').replace(/\s+/g,' ').trim()}
+  function normNo(s){return String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'')}
+  function todayKey(){return typeof today==='string'?today:new Date().toISOString().slice(0,10)}
+  function dateIso(s){s=clean(s);let m=s.match(/(\d{1,2})[-\/. ]([A-Za-z]{3}|\d{1,2})[-\/. ](\d{2,4})/);if(!m)return'';let mon=isNaN(+m[2])?['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'].indexOf(m[2].slice(0,3).toUpperCase())+1:+m[2];let y=+m[3];if(y<100)y+=2000;return y+'-'+String(mon).padStart(2,'0')+'-'+String(+m[1]).padStart(2,'0')}
+  function displayDate(s){return s||''}
+  function canQrScan(){return !!user&&!isReadOnly()&&(user.role==='ADMIN'||user.role==='SECURITY_GUARD'||user.role==='SND_USER'||String(user.role||'').startsWith('PLANT_'))}
+  function canQrCorrect(){return !!user&&!isReadOnly()&&user.role==='ADMIN'}
+  function canQrView(){return !!user&&(user.role==='ADMIN'||user.role==='SECURITY_GUARD'||user.role==='SND_USER'||String(user.role||'').startsWith('PLANT_'))}
+  function rolePlant(){try{return typeof invRolePlant==='function'?invRolePlant():(typeof plantFromRole==='function'?plantFromRole():'All Plants')}catch(_){return'All Plants'}}
+  function qrPlantAllowed(r){let p=rolePlant();return p==='All Plants'||!r.gate_name||r.gate_name===p}
+  function findAfter(text,patterns){for(let p of patterns){let m=text.match(p);if(m)return clean(m[1]||m[0])}return''}
+  function invoiceQrParser(raw){
+    let text=String(raw||'').replace(/\r/g,'\n'), flat=clean(text);
+    let sap=findAfter(flat,[/(\b7\d{9})(?=\s*SAP\s*Doc\s*no)/i,/SAP\s*Doc\s*no\.?\s*[:\-]?\s*(\d{8,12})/i,/Doc(?:ument)?\s*No\.?\s*[:\-]?\s*(\d{8,12})/i]);
+    let tt=findAfter(flat,[/([A-Z]{2}\d{1,2}[A-Z]{1,3}\d{3,5})\s*T\.?T\.?No/i,/T\.?T\.?\s*No\.?\s*[:\-]?\s*([A-Z0-9 -]{6,15})/i,/Vehicle\s*No\.?\s*[:\-]?\s*([A-Z0-9 -]{6,15})/i]);
+    let distCode=findAfter(flat,[/Supplier Recipient \(Ship to party\)\s*(\d{5,8})/i,/PAYER\s*-\s*(\d{5,8})/i,/Ship to party\D+(\d{5,8})/i]);
+    let distName=findAfter(flat,[/Supplier Recipient \(Ship to party\)\s*\d{5,8}\s+(.+?)\s+(?:Shop|Delivery no\.|GST|[A-Z ]+\d{6})/i,/PAYER\s*-\s*\d{5,8}\s+(.+?)(?:\s+Ordering Party|\s+GSTIN|\s+Shop)/i]);
+    let delivery=findAfter(flat,[/Delivery\s*no\.?\s*(\d{6,12})/i,/Delivery\s*Number\s*[:\-]?\s*(\d{6,12})/i]);
+    let salesOrder=findAfter(flat,[/Sales\s*Order\s*(\d{6,12})/i,/Sales\s*Order\s*Number\s*[:\-]?\s*(\d{6,12})/i]);
+    let dt=findAfter(flat,[/(\d{1,2}[- ][A-Za-z]{3}[- ]\d{2,4})\s+(\d{1,2}:\d{2})\s*Road/i,/Date\s*Time\s*(\d{1,2}[- ][A-Za-z]{3}[- ]\d{2,4})\s+(\d{1,2}:\d{2})/i]);
+    let time=findAfter(flat,[/\d{1,2}[- ][A-Za-z]{3}[- ]\d{2,4}\s+(\d{1,2}:\d{2})\s*Road/i,/Time\s*[:\-]?\s*(\d{1,2}:\d{2})/i]);
+    let invDate=(dt.match(/\d{1,2}[- ][A-Za-z]{3}[- ]\d{2,4}/)||[])[0]||findAfter(flat,[/Date\s*[:\-]?\s*(\d{1,2}[- ][A-Za-z]{3}[- ]\d{2,4})/i]);
+    let cylinders=[], re=/\b(M\d{5})\s+(.+?)\s+(\d+(?:\.\d+)?)\s+(EA|KG|NOS|NO)\b/gi, m;
+    while((m=re.exec(flat))){let desc=clean(m[2]).replace(/\s+\d+\s*$/,'');if(/Taxable|Total|Rate|HSN|Rounding/i.test(desc))continue;cylinders.push({material_code:m[1].toUpperCase(),cylinder_type:MATERIAL_MAP[m[1].toUpperCase()]||desc,quantity:Math.round(+m[3]||0),unit:m[4].toUpperCase()})}
+    if(!cylinders.length){let m2=flat.match(/\b(M\d{5})\s+(.+?)\s+(\d+(?:\.\d+)?)\s+(EA|KG)\s+\d{6}/i);if(m2)cylinders.push({material_code:m2[1].toUpperCase(),cylinder_type:MATERIAL_MAP[m2[1].toUpperCase()]||clean(m2[2]),quantity:Math.round(+m2[3]||0),unit:m2[4].toUpperCase()})}
+    return {sap_doc_no:normNo(sap),tt_number:normNo(tt),distributor_code:distCode,distributor_name:distName,delivery_number:delivery,sales_order_number:salesOrder,invoice_date:displayDate(invDate),invoice_date_iso:dateIso(invDate),invoice_time:time,cylinders:cylinders.filter(c=>c.material_code&&c.quantity),raw_qr_text_admin:raw};
+  }
+  function duplicateCheck(draft,exceptId=''){
+    let rows=(invoiceQrScans||[]).filter(r=>r.id!==exceptId), tests=[
+      ['SAP Doc No.',r=>draft.sap_doc_no&&normNo(r.sap_doc_no)===normNo(draft.sap_doc_no)],
+      ['Delivery Number',r=>draft.delivery_number&&String(r.delivery_number)===String(draft.delivery_number)],
+      ['Sales Order Number',r=>draft.sales_order_number&&String(r.sales_order_number)===String(draft.sales_order_number)],
+      ['TT Number + Invoice Date',r=>draft.tt_number&&normNo(r.tt_number)===normNo(draft.tt_number)&&(r.invoice_date_iso||r.invoice_date)===(draft.invoice_date_iso||draft.invoice_date)]
+    ];
+    for(let [reason,fn] of tests){let hit=rows.find(fn);if(hit)return{duplicate:true,reason,record:hit}}return{duplicate:false};
+  }
+  function qrStatus(html,cls='qr-warn'){if(e('qrStatus')){qrStatus.className='qr-status '+cls;qrStatus.innerHTML=html}}
+  function htmlCylRows(cyls){return (cyls||[]).map((c,i)=>'<tr><td><input id="qrMat_'+i+'" value="'+esc(c.material_code)+'"></td><td><input id="qrDesc_'+i+'" value="'+esc(c.cylinder_type)+'"></td><td><input id="qrQty_'+i+'" type="number" value="'+esc(c.quantity)+'"></td><td><input id="qrUnit_'+i+'" value="'+esc(c.unit||'EA')+'"></td></tr>').join('')}
+  function showConfirm(draft,source='QR'){
+    qrDraft={...draft,source};let dup=duplicateCheck(qrDraft), disabled=dup.duplicate?'disabled':'';
+    let dupHtml=dup.duplicate?'<div class="qr-status qr-bad"><b>This invoice/truck has already been scanned.</b><br>Duplicate by '+esc(dup.reason)+' | Previous scan: '+esc(dup.record.scan_time||dup.record.created_at||'')+' | By '+esc(dup.record.scanned_by||'')+' | Gate '+esc(dup.record.gate_name||'')+' | Status '+esc(dup.record.scan_status||'')+'</div>':'<div class="qr-status qr-ok"><b>Scan decoded successfully.</b> Please verify and save.</div>';
+    let html=dupHtml+'<div class="qr-form"><label>Invoice / SAP Doc No.<input id="qrSap" value="'+esc(qrDraft.sap_doc_no)+'"></label><label>TT Number<input id="qrTt" value="'+esc(qrDraft.tt_number)+'"></label><label>Distributor Code<input id="qrDistCode" value="'+esc(qrDraft.distributor_code)+'"></label><label>Distributor Name<input id="qrDistName" value="'+esc(qrDraft.distributor_name)+'"></label><label>Delivery Number<input id="qrDelivery" value="'+esc(qrDraft.delivery_number)+'"></label><label>Sales Order Number<input id="qrSalesOrder" value="'+esc(qrDraft.sales_order_number)+'"></label><label>Invoice Date<input id="qrInvDate" value="'+esc(qrDraft.invoice_date)+'"></label><label>Invoice Time<input id="qrInvTime" value="'+esc(qrDraft.invoice_time)+'"></label></div><table class="qr-cyl-table report"><tr><th>Material Code</th><th>Cylinder Type / Material Description</th><th>Quantity</th><th>Unit</th></tr>'+htmlCylRows(qrDraft.cylinders)+'</table><div class="toolbar" style="margin-top:10px"><button class="orange" '+disabled+' onclick="saveInvoiceQrScan()">Confirm & Save Scan</button><button onclick="autoFillGateFromQr()">Auto-fill Gate Entry Only</button><button class="light" onclick="closeInvoiceQrScanner()">Close</button></div>';
+    if(e('qrConfirm'))qrConfirm.innerHTML=html;
+  }
+  function collectDraft(){let cyl=(qrDraft?.cylinders||[]).map((c,i)=>({material_code:e('qrMat_'+i)?.value||c.material_code,cylinder_type:e('qrDesc_'+i)?.value||c.cylinder_type,quantity:Math.round(+(e('qrQty_'+i)?.value||c.quantity)||0),unit:e('qrUnit_'+i)?.value||c.unit||'EA'})).filter(c=>c.material_code||c.quantity);return{...qrDraft,sap_doc_no:normNo(e('qrSap')?.value),tt_number:normNo(e('qrTt')?.value),distributor_code:e('qrDistCode')?.value?.trim()||'',distributor_name:e('qrDistName')?.value?.trim()||'',delivery_number:e('qrDelivery')?.value?.trim()||'',sales_order_number:e('qrSalesOrder')?.value?.trim()||'',invoice_date:e('qrInvDate')?.value?.trim()||'',invoice_date_iso:dateIso(e('qrInvDate')?.value)||qrDraft?.invoice_date_iso||'',invoice_time:e('qrInvTime')?.value?.trim()||'',cylinders:cyl}}
+  function cylToPcim(cyls){let o={d14:0,d19:0,x19:0,d425:0,d5:0,nd5:0,c10:0,ftl2:0,d475sc:0,d475lot:0};(cyls||[]).forEach(c=>{let s=(c.material_code+' '+c.cylinder_type).toLowerCase(),q=+c.quantity||0;if(/14\.2|m00087|m00089|m00090/.test(s))o.d14+=q;else if(/425|m00140/.test(s))o.d425+=q;else if(/47\.5.*lot|m00069|m00071|m00072|m00690|m00692/.test(s))o.d475lot+=q;else if(/47\.5/.test(s))o.d475sc+=q;else if(/19.*xtra|nanocut|m00450|m00094|m90450/.test(s))o.x19+=q;else if(/19|m00002|m00010|m00011/.test(s))o.d19+=q;else if(/5.*ftl|pos|m00215|m00217/.test(s))o.nd5+=q;else if(/5/.test(s))o.d5+=q;else if(/10/.test(s))o.c10+=q});return o}
+  function autoFillGateFromQr(){let d=collectDraft();if(!e('invDocNo'))return alert('Open Plant Cylinders Inventory Management first.');if(e('invDocNo'))invDocNo.value=d.sap_doc_no;if(e('invTruck'))invTruck.value=d.tt_number;if(e('invDistributor'))invDistributor.value=[d.distributor_code,d.distributor_name].filter(Boolean).join(' - ');if(e('invDate')&&d.invoice_date_iso)invDate.value=d.invoice_date_iso;if(e('invTime')&&d.invoice_time)invTime.value=d.invoice_time;if(e('invMove'))invMove.value='OUT';if(e('invDocType'))invDocType.value='Invoice';if(e('invLoadType'))invLoadType.value='Filled LPG Cylinders OUT';let map=cylToPcim(d.cylinders);Object.entries(map).forEach(([k,v])=>{if(e('inv_'+k))e('inv_'+k).value=v});try{updateInventoryInterlock();renderInventory()}catch(_){}qrStatus('Gate-2 entry form auto-filled. Please verify and save Gate-2 Entry separately.','qr-ok')}
+  function saveInvoiceQrScan(){
+    if(!canQrScan())return alert('You are not authorized to save QR scans.');
+    let d=collectDraft(), dup=duplicateCheck(d);if(dup.duplicate){showConfirm(d,d.source);return}
+    let row={id:'QR'+Date.now(),sap_doc_no:d.sap_doc_no,tt_number:d.tt_number,distributor_code:d.distributor_code,distributor_name:d.distributor_name,delivery_number:d.delivery_number,sales_order_number:d.sales_order_number,invoice_date:d.invoice_date,invoice_date_iso:d.invoice_date_iso,invoice_time:d.invoice_time,cylinders:d.cylinders,raw_qr_text:(user?.role==='ADMIN'?d.raw_qr_text_admin:''),scan_status:d.source==='OCR'?'OCR extracted':'Saved',duplicate_of:'',scanned_by:user?.id||'',gate_name:rolePlant(),scan_time:new Date().toLocaleString('en-IN'),created_at:new Date().toISOString(),updated_at:new Date().toISOString()};
+    invoiceQrScans.unshift(row);save();autoFillGateFromQr();renderInvoiceQr();recordAudit?.('INVOICE_QR_SCAN_SAVE',row.sap_doc_no+' '+row.tt_number,'PCIM QR');qrStatus('Invoice QR saved successfully and Gate-2 form auto-filled.','qr-ok');
+  }
+  function deleteInvoiceQr(id){if(!canQrCorrect())return alert('Only Admin can delete/unlock QR records.');if(!confirm('Delete this QR scan record?'))return;invoiceQrScans=invoiceQrScans.filter(r=>r.id!==id);save();renderInvoiceQr();recordAudit?.('INVOICE_QR_DELETE',id,'PCIM QR')}
+  function renderInvoiceQr(){
+    if(!e('invoiceQrCard'))return;let date=e('qrFilterDate')?.value||todayKey(),term=(e('qrFilterText')?.value||'').toLowerCase(),rows=(invoiceQrScans||[]).filter(qrPlantAllowed).filter(r=>(!date||r.invoice_date_iso===date||r.created_at?.slice(0,10)===date)).filter(r=>!term||JSON.stringify(r).toLowerCase().includes(term));
+    let todayRows=(invoiceQrScans||[]).filter(qrPlantAllowed).filter(r=>(r.created_at||'').slice(0,10)===todayKey()), dup=(invoiceQrScans||[]).filter(r=>r.scan_status==='Duplicate').length, fail=(invoiceQrScans||[]).filter(r=>/Failed/i.test(r.scan_status||'')).length;
+    if(e('qrToday'))qrToday.textContent=todayRows.length;if(e('qrSuccess'))qrSuccess.textContent=(invoiceQrScans||[]).filter(r=>/Saved|OCR/i.test(r.scan_status||'')).length;if(e('qrDuplicate'))qrDuplicate.textContent=dup;if(e('qrFailed'))qrFailed.textContent=fail;
+    if(e('qrHistoryTable'))qrHistoryTable.innerHTML='<tr><th>Scan Time</th><th>Status</th><th>SAP Doc</th><th>Distributor</th><th>TT No</th><th>Delivery</th><th>SO</th><th>Date</th><th>Cylinders</th><th>User/Gate</th><th>Action</th></tr>'+rows.map(r=>'<tr><td>'+esc(r.scan_time)+'</td><td><span class="qr-pill '+(r.scan_status==='OCR extracted'?'ocr':r.duplicate_of?'dup':'saved')+'">'+esc(r.scan_status)+'</span></td><td><b>'+esc(r.sap_doc_no)+'</b></td><td>'+esc([r.distributor_code,r.distributor_name].filter(Boolean).join(' - '))+'</td><td>'+esc(r.tt_number)+'</td><td>'+esc(r.delivery_number)+'</td><td>'+esc(r.sales_order_number)+'</td><td>'+esc(r.invoice_date)+'</td><td>'+esc((r.cylinders||[]).map(c=>c.material_code+': '+c.quantity+' '+c.unit).join('; '))+'</td><td>'+esc(r.scanned_by+' / '+r.gate_name)+'</td><td>'+(canQrCorrect()?'<button onclick="deleteInvoiceQr(&quot;'+esc(r.id)+'&quot;)">Delete</button>':'')+'</td></tr>').join('');
+  }
+  async function ensureScript(src){if([...document.scripts].some(s=>s.src.includes(src)))return;await new Promise((res,rej)=>{let s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s)})}
+  async function openInvoiceQrScanner(){if(!canQrScan())return alert('Only Security Guard / Plant / S&D / Admin can scan invoice QR.');ensureInvoiceQrUi();e('invoiceQrModal')?.classList.remove('hide');if(e('qrConfirm'))qrConfirm.innerHTML='';qrStatus('Starting camera... allow camera permission on Android Chrome / Edge.','qr-warn');try{await ensureScript('https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js');qrScanner=new Html5Qrcode('qrReader');await qrScanner.start({facingMode:'environment'},{fps:10,qrbox:{width:260,height:260}},txt=>{stopInvoiceQrScanner();showConfirm(invoiceQrParser(txt),'QR')},()=>{});qrStatus('Camera ready. Point at IOCL Tax Invoice QR code.','qr-ok')}catch(err){qrStatus('Camera failed or permission denied. Use image/PDF upload fallback below. '+esc(err.message||err),'qr-bad')}}
+  async function stopInvoiceQrScanner(){try{if(qrScanner)await qrScanner.stop()}catch(_){}try{qrScanner&&qrScanner.clear()}catch(_){}qrScanner=null}
+  async function closeInvoiceQrScanner(){await stopInvoiceQrScanner();e('invoiceQrModal')?.classList.add('hide')}
+  async function scanInvoiceQrFile(){
+    let f=e('qrFile')?.files?.[0];if(!f)return alert('Select invoice image/PDF/text file first.');
+    qrStatus('Reading fallback file...','qr-warn');
+    try{
+      let name=f.name.toLowerCase(),txt='';
+      if(/\.(png|jpg|jpeg|webp)$/i.test(name)){await ensureScript('https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js');let inst=new Html5Qrcode('qrFileReader');txt=await inst.scanFile(f,true).catch(()=> '');try{inst.clear()}catch(_){}}
+      if(!txt&&/\.pdf$/i.test(name)){await ensureScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';let pdf=await pdfjsLib.getDocument({data:new Uint8Array(await f.arrayBuffer())}).promise;for(let i=1;i<=pdf.numPages;i++){let page=await pdf.getPage(i),tc=await page.getTextContent();txt+=' '+tc.items.map(x=>x.str).join(' ')}}
+      if(!txt)txt=await f.text().catch(()=> '');
+      if(!txt)throw new Error('No QR/text could be read. Please use camera scan or upload clear text-based PDF/image QR.');
+      let d=invoiceQrParser(txt);showConfirm(d, /\.pdf$/i.test(name)?'OCR':'QR Image');qrStatus('Fallback extraction completed. Please confirm fields before saving.','qr-ok');
+    }catch(err){qrStatus('Failed scan/retry: '+esc(err.message||err),'qr-bad')}
+  }
+  function exportInvoiceQr(){let rows=[['Scan Time','Status','SAP Doc No','TT Number','Distributor Code','Distributor Name','Delivery Number','Sales Order Number','Invoice Date','Invoice Time','Cylinders','Scanned By','Gate'],...(invoiceQrScans||[]).filter(qrPlantAllowed).map(r=>[r.scan_time,r.scan_status,r.sap_doc_no,r.tt_number,r.distributor_code,r.distributor_name,r.delivery_number,r.sales_order_number,r.invoice_date,r.invoice_time,(r.cylinders||[]).map(c=>c.material_code+' '+c.quantity+' '+c.unit).join('; '),r.scanned_by,r.gate_name])];download('invoice-qr-scans.csv',rows.map(r=>r.map(c=>'"'+String(c??'').replaceAll('"','""')+'"').join(',')).join('\n'))}
+  function ensureInvoiceQrUi(){
+    if(!e('inventory')||e('invoiceQrCard'))return;
+    let host=e('inventory')?.querySelector('.inv-board');if(!host)return;
+    host.insertAdjacentHTML('beforeend','<div id="invoiceQrCard" class="card qr-card"><div class="qr-head"><h2>Invoice QR Scanner</h2><p>Scan IOCL Tax Invoice QR to extract only SAP Doc, TT, Distributor, Delivery/SO, date/time and cylinder quantities.</p></div><div class="qr-actions no-print"><button class="qr-scan-btn" onclick="openInvoiceQrScanner()">Scan Invoice QR</button><input id="qrFile" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.txt,.csv"><button onclick="scanInvoiceQrFile()">Upload PDF/Image Fallback</button><input id="qrFilterDate" type="date" class="field" style="max-width:160px" onchange="renderInvoiceQr()"><input id="qrFilterText" class="field" style="max-width:240px" placeholder="Search TT / SAP / Distributor" oninput="renderInvoiceQr()"><button onclick="exportInvoiceQr()">Export QR Report</button></div><div class="qr-kpis"><div class="qr-mini green"><span>Today Scans</span><b id="qrToday">0</b></div><div class="qr-mini green"><span>Successful</span><b id="qrSuccess">0</b></div><div class="qr-mini red"><span>Duplicate Attempts</span><b id="qrDuplicate">0</b></div><div class="qr-mini orange"><span>Failed</span><b id="qrFailed">0</b></div></div><div class="scroll"><table id="qrHistoryTable" class="qr-history report"></table></div><div id="qrFileReader" style="display:none"></div></div><div id="invoiceQrModal" class="qr-modal hide"><div class="qr-modal-body"><div class="qr-modal-head"><b>Scan Invoice QR / बिल QR स्कैन करें</b><button class="qr-close" onclick="closeInvoiceQrScanner()">Close</button></div><div id="qrStatus" class="qr-status qr-warn">Ready.</div><div id="qrReader" class="qr-reader"></div><div id="qrConfirm" class="qr-confirm"></div></div></div>');
+    if(e('qrFilterDate')&&!qrFilterDate.value)qrFilterDate.value=todayKey();renderInvoiceQr();
+  }
+  function installInvoiceQr(){
+    const oldPersist=window.persistLocalState;window.persistLocalState=function(){oldPersist&&oldPersist();try{localStorage.indaneInvoiceQrScans=JSON.stringify(invoiceQrScans)}catch(_){}};
+    const oldPayload=window.portalStatePayload;window.portalStatePayload=function(){let d=oldPayload?oldPayload():{};d.invoiceQrScans=invoiceQrScans;return d};
+    const oldApply=window.applyPortalState;window.applyPortalState=function(d){oldApply&&oldApply(d);invoiceQrScans=d?.invoiceQrScans||invoiceQrScans;window.invoiceQrScans=invoiceQrScans;persistLocalState();renderInvoiceQr()};
+    const oldRender=window.renderInventory;window.renderInventory=function(){oldRender&&oldRender();ensureInvoiceQrUi();renderInvoiceQr()};
+    const oldShow=window.show;window.show=function(id){oldShow&&oldShow(id);if(id==='inventory'){ensureInvoiceQrUi();renderInvoiceQr()}};
+    const oldAll=window.renderAll;window.renderAll=function(){oldAll&&oldAll();ensureInvoiceQrUi();renderInvoiceQr()};
+  }
+  Object.assign(window,{invoiceQrParser,invoiceQrDuplicateCheck:duplicateCheck,openInvoiceQrScanner,closeInvoiceQrScanner,stopInvoiceQrScanner,scanInvoiceQrFile,saveInvoiceQrScan,autoFillGateFromQr,renderInvoiceQr,deleteInvoiceQr,exportInvoiceQr});
+  installInvoiceQr();ensureInvoiceQrUi();renderInvoiceQr();
+})();
