@@ -89,6 +89,37 @@
   function htmlCylRows(cyls){return (cyls||[]).map((c,i)=>'<tr><td><input id="qrMat_'+i+'" value="'+esc(c.material_code)+'"></td><td><input id="qrDesc_'+i+'" value="'+esc(c.cylinder_type)+'"></td><td><input id="qrQty_'+i+'" type="number" value="'+esc(c.quantity)+'"></td><td><input id="qrUnit_'+i+'" value="'+esc(c.unit||'EA')+'"></td></tr>').join('')}
   function blankDraft(source='Manual'){return{sap_doc_no:'',tt_number:'',distributor_code:'',distributor_name:'',delivery_number:'',sales_order_number:'',invoice_date:'',invoice_date_iso:todayKey(),invoice_time:'',cylinders:[{material_code:'M00087',cylinder_type:MATERIAL_MAP.M00087,quantity:0,unit:'EA'}],raw_qr_text_admin:'',source}}
   function draftLooksUseful(d){return !!(d&&(d.sap_doc_no||d.delivery_number||d.sales_order_number||d.tt_number||d.distributor_code||(d.cylinders||[]).some(c=>c.material_code&&c.quantity)))}
+  function draftFromBackendOcr(data,mode){
+    let items=(data.items||[]).map(x=>({material_code:x.material_code||'',cylinder_type:x.description||MATERIAL_MAP[x.material_code]||'',quantity:Math.round(+x.quantity||0),unit:x.unit||'EA'})).filter(x=>x.material_code||x.quantity);
+    return {
+      sap_doc_no:normNo(data.sap_doc_no||data.sap_document_number||''),
+      tt_number:normNo(data.tt_number||data.truck_number||''),
+      distributor_code:String(data.distributor_code||'').trim(),
+      distributor_name:String(data.distributor_name||'').trim(),
+      delivery_number:String(data.delivery_number||data.delivery_challan_number||'').trim(),
+      sales_order_number:String(data.sales_order_number||data.ac4_number||'').trim(),
+      invoice_date:data.invoice_date||data.document_date||'',
+      invoice_date_iso:dateIso(data.invoice_date||data.document_date||'')||todayKey(),
+      invoice_time:data.invoice_time||data.document_time||'',
+      cylinders:items,
+      raw_qr_text_admin:data.raw_text_preview||'',
+      gate_mode:mode==='erv'||data.document_type==='DELIVERY_CHALLAN_ERV'?'IN':'OUT',
+      doc_type:mode==='erv'||data.document_type==='DELIVERY_CHALLAN_ERV'?'ERV':'Invoice',
+      backend_engine:data.engine||'backend_ocr',
+      backend_warnings:data.warnings||[],
+      source:'Backend OCR'
+    };
+  }
+  async function tryBackendOcr(f,mode){
+    try{
+      let fd=new FormData();fd.append('file',f);
+      let r=await fetch('/api/lpg/ocr/extract',{method:'POST',body:fd});
+      let ct=r.headers.get('content-type')||'';
+      if(!r.ok||!ct.includes('application/json'))return null;
+      let data=await r.json(), draft=draftFromBackendOcr(data,mode);
+      return draftLooksUseful(draft)?draft:null;
+    }catch(_){return null}
+  }
   function scannerHelp(){
     let label=qrOcrMode==='erv'?'Read ERV / Delivery Challan':'Read Complete Invoice / QR Image';
     return '<div class="qr-scan-tools no-print"><input id="qrModalFile" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.txt,.csv" capture="environment"><button onclick="scanInvoiceQrModalFile()">'+label+'</button><button class="light" onclick="manualInvoiceQrEntry()">Manual Entry</button><button class="light" onclick="closeInvoiceQrScanner()">Close</button></div><div class="qr-remedy"><b>If camera cannot read:</b> the printed code may be too dense or may contain only GST/e-invoice data. Use <b>'+label+'</b>; the portal will OCR the visible document text. If the image/PDF is blurred or protected, use Manual Entry.</div>';
@@ -202,8 +233,14 @@
   async function processInvoiceQrFile(f,mode='invoice'){
     if(!f)return alert('Select invoice image/PDF/text file first.');
     qrOcrMode=mode||qrOcrMode||'invoice';
-    qrStatus('Reading '+(qrOcrMode==='erv'?'ERV / Delivery Challan':'complete invoice')+'. Trying document text, QR crop/upscale and OCR...','qr-warn');
+    qrStatus('Reading '+(qrOcrMode==='erv'?'ERV / Delivery Challan':'complete invoice')+'. Trying backend PDF/OCR first, then local QR/OCR fallback...','qr-warn');
     try{
+      let backendDraft=await tryBackendOcr(f,qrOcrMode);
+      if(backendDraft){
+        showConfirm(backendDraft,'Backend OCR');
+        qrStatus('Backend OCR extracted document successfully using '+esc(backendDraft.backend_engine||'OCR')+'. Please verify and save.'+(backendDraft.backend_warnings?.length?'<br><small>'+esc(backendDraft.backend_warnings.join(' | '))+'</small>':''),'qr-ok');
+        return;
+      }
       let name=f.name.toLowerCase(),txt='';
       if(/\.(png|jpg|jpeg|webp)$/i.test(name)){let c=await imageFileToCanvas(f);txt=await smartDecodeQrFromCanvas(c);let d0=qrOcrMode==='erv'?ervOcrParser(txt):invoiceQrParser(txt);if(!draftLooksUseful(d0))txt+=' '+await ocrCanvas(c,qrOcrMode==='erv'?'ERV image':'invoice image',qrOcrMode)}
       if(!txt&&/\.pdf$/i.test(name))txt=await textAndQrFromPdf(f);
