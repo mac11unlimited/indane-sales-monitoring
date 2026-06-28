@@ -20,28 +20,44 @@
   function rolePlant(){try{return typeof invRolePlant==='function'?invRolePlant():(typeof plantFromRole==='function'?plantFromRole():'All Plants')}catch(_){return'All Plants'}}
   function qrPlantAllowed(r){let p=rolePlant();return p==='All Plants'||!r.gate_name||r.gate_name===p}
   function findAfter(text,patterns){for(let p of patterns){let m=text.match(p);if(m)return clean(m[1]||m[0])}return''}
+  function normalizeOcrText(raw){
+    return String(raw||'')
+      .replace(/\r/g,'\n')
+      .replace(/[|¦]/g,' ')
+      .replace(/[“”]/g,'"')
+      .replace(/[‘’]/g,"'")
+      .replace(/S\s*A\s*P/gi,'SAP')
+      .replace(/T\s*\.?\s*T\s*\.?\s*N\s*o/gi,'T.T.No')
+      .replace(/D\s*o\s*c\s*\.?\s*N\s*o/gi,'Doc.No')
+      .replace(/D\s*e\s*l\s*i\s*v\s*e\s*r\s*y/gi,'Delivery')
+      .replace(/R\s*e\s*c\s*i\s*p\s*i\s*e\s*n\s*t/gi,'Recipient')
+      .replace(/S\s*h\s*i\s*p\s*t\s*o/gi,'Ship to');
+  }
+  function bestNonEmpty(...vals){return vals.map(v=>clean(v)).find(Boolean)||''}
   function invoiceQrParser(raw){
-    let text=String(raw||'').replace(/\r/g,'\n'), flat=clean(text);
-    let sap=findAfter(flat,[/(\b7\d{9})(?=\s*SAP\s*Doc\s*no)/i,/SAP\s*Doc\s*no\.?\s*[:\-]?\s*(\d{8,12})/i,/Doc(?:ument)?\s*No\.?\s*[:\-]?\s*(\d{8,12})/i]);
-    let tt=findAfter(flat,[/T\.?T\.?\s*No\.?\s*[:\-]?\s*([A-Z]{2}\d{1,2}[A-Z]{1,3}\d{3,5})/i,/([A-Z]{2}\d{1,2}[A-Z]{1,3}\d{3,5})\s*T\.?T\.?No/i,/Vehicle\s*No\.?\s*[:\-]?\s*([A-Z]{2}\d{1,2}[A-Z]{1,3}\d{3,5})/i,/T\.?T\.?\s*No\.?\s*[:\-]?\s*([A-Z0-9 -]{6,15})(?=\s+(?:Time|Date|Cont|Supplier|$))/i]);
-    let distCode=findAfter(flat,[/PAYER\s*-\s*(\d{5,8})/i,/Ordering Party\(Bill to party\)\s*:\s*(\d{5,8})/i,/Ship to party\D+(?:\d{3,4}\D+)?(\d{5,8})/i]);
-    let distName=findAfter(flat,[/PAYER\s*-\s*\d{5,8}\s+(.+?)(?:\s+Reverse Charge|\s+Ordering Party|\s+GSTIN|\s+Shop)/i,/Ordering Party\(Bill to party\)\s*:\s*\d{5,8}\s+GSTIN\s+[A-Z0-9]+\s+(.+?)\s+(?:Shop|Place of supply|GHAZIABAD|[A-Z ]+\d{6})/i,/Supplier Recipient \(Ship to party\).*?\d{5,8}\s+\(Mob No\.-\d+\)\s+(.+?)\s+(?:IOCL|Shop|Delivery no\.|GST)/i]);
+    let text=normalizeOcrText(raw), flat=clean(text);
+    let sap=findAfter(flat,[/SAP\s*Doc\s*no\.?\s*[:\-]?\s*(\d{8,12})/i,/SAP\s*Document\s*No\.?\s*[:\-]?\s*(\d{8,12})/i,/\bSAP\s*Doc\D{0,12}(\d{8,12})/i,/Form\s*No\s+[A-Z0-9]+\s+SAP\s*Doc\s*no\.?\s*(\d{8,12})/i,/(\b7\d{9})(?=\s*(?:Date|Time|T\.?T|Doc|Invoice))/i,/Doc(?:ument)?\s*No\.?\s*[:\-]?\s*(\d{8,12})/i]);
+    let tt=findAfter(flat,[/T\.?T\.?\s*No\.?\s*[:\-]?\s*([A-Z]{2}\s*\d{1,2}\s*[A-Z]{1,3}\s*\d{3,5})/i,/Truck\s*No\.?\s*[:\-]?\s*([A-Z]{2}\s*\d{1,2}\s*[A-Z]{1,3}\s*\d{3,5})/i,/Vehicle\s*No\.?\s*[:\-]?\s*([A-Z]{2}\s*\d{1,2}\s*[A-Z]{1,3}\s*\d{3,5})/i,/([A-Z]{2}\s*\d{1,2}\s*[A-Z]{1,3}\s*\d{3,5})\s*(?:T\.?T\.?No|Truck|Vehicle)/i,/T\.?T\.?\s*No\.?\s*[:\-]?\s*([A-Z0-9 -]{6,15})(?=\s+(?:Time|Date|Cont|Supplier|Dem|$))/i]);
+    let shipBlock=findAfter(flat,[/Recipient\s*\(Ship\s*to\s*party\)\s+(.+?)(?:GST\s*Registration|PAYER|Reverse Charge|Ordering Party|Item\s+Material)/i,/Ship\s*to\s*party\)\s+(.+?)(?:GSTIN|PAYER|Reverse Charge|Ordering Party)/i]);
+    let distCode=bestNonEmpty(findAfter(flat,[/PAYER\s*-\s*(\d{5,8})/i,/Ordering Party\(Bill to party\)\s*:\s*(\d{5,8})/i,/Recipient\s*\(Ship\s*to\s*party\)\s*0?(\d{5,8})/i,/Ship\s*to\s*party\D+0?(\d{5,8})/i]),findAfter(shipBlock,[/\b0?(\d{5,8})\b/]));
+    let distName=bestNonEmpty(findAfter(flat,[/PAYER\s*-\s*\d{5,8}\s+(.+?)(?:\s+Reverse Charge|\s+Ordering Party|\s+GSTIN|\s+Shop)/i,/Ordering Party\(Bill to party\)\s*:\s*\d{5,8}\s+GSTIN\s+[A-Z0-9]+\s+(.+?)\s+(?:Shop|Place of supply|GHAZIABAD|[A-Z ]+\d{6})/i,/Recipient\s*\(Ship\s*to\s*party\).*?\d{5,8}(?:\s+\(Mob[^)]*\))?\s+(.+?)\s+(?:Shop|GSTIN|Ordering|PAYER|Place of supply|[A-Z ]+\d{6})/i]),findAfter(shipBlock,[/\b\d{5,8}(?:\s+\(Mob[^)]*\))?\s+([A-Za-z0-9 .,&'-]+?)(?:\s+Shop|\s+GSTIN|\s+[A-Z ]+\d{6}|$)/i]));
     let delivery=findAfter(flat,[/Delivery\s*no\.?\s*(\d{6,12})/i,/Delivery\s*Number\s*[:\-]?\s*(\d{6,12})/i]);
     let salesOrder=findAfter(flat,[/Sales\s*Order\s*(\d{6,12})/i,/Sales\s*Order\s*Number\s*[:\-]?\s*(\d{6,12})/i]);
     let dt=findAfter(flat,[/(\d{1,2}[- ][A-Za-z]{3}[- ]\d{2,4})\s+(\d{1,2}:\d{2})\s*Road/i,/Date\s*Time\s*(\d{1,2}[- ][A-Za-z]{3}[- ]\d{2,4})\s+(\d{1,2}:\d{2})/i]);
     let time=findAfter(flat,[/\d{1,2}[- ][A-Za-z]{3}[- ]\d{2,4}\s+(\d{1,2}:\d{2})\s*Road/i,/Time\s*[:\-]?\s*(\d{1,2}:\d{2})/i]);
     let invDate=(dt.match(/\d{1,2}[- ][A-Za-z]{3}[- ]\d{2,4}/)||[])[0]||findAfter(flat,[/Date\s*[:\-]?\s*(\d{1,2}[- ][A-Za-z]{3}[- ]\d{2,4})/i]);
-    let cylinders=[], re=/\b(M\d{5})\s+(.+?)\s+(\d+(?:\.\d+)?)\s+(EA|KG|NOS|NO)\b/gi, m;
+    let cylinders=[], re=/\b(M\d{5})\s+(.+?)\s+(-?\d+(?:\.\d+)?)\s+(EA|KG|NOS|NO)\b/gi, m;
     while((m=re.exec(flat))){let desc=clean(m[2]).replace(/\s+\d+\s*$/,'');if(/Taxable|Total|Rate|HSN|Rounding/i.test(desc))continue;cylinders.push({material_code:m[1].toUpperCase(),cylinder_type:MATERIAL_MAP[m[1].toUpperCase()]||desc,quantity:Math.round(+m[3]||0),unit:m[4].toUpperCase()})}
-    if(!cylinders.length){let m2=flat.match(/\b(M\d{5})\s+(.+?)\s+(\d+(?:\.\d+)?)\s+(EA|KG)\s+\d{6}/i);if(m2)cylinders.push({material_code:m2[1].toUpperCase(),cylinder_type:MATERIAL_MAP[m2[1].toUpperCase()]||clean(m2[2]),quantity:Math.round(+m2[3]||0),unit:m2[4].toUpperCase()})}
+    if(!cylinders.length){let m2=flat.match(/\b(M\d{5})\s+(.+?)\s+(-?\d+(?:\.\d+)?)\s+(EA|KG)\s+\d{5,8}/i);if(m2)cylinders.push({material_code:m2[1].toUpperCase(),cylinder_type:MATERIAL_MAP[m2[1].toUpperCase()]||clean(m2[2]),quantity:Math.round(+m2[3]||0),unit:m2[4].toUpperCase()})}
+    if(!cylinders.length){let m3=flat.match(/\b(M\d{5})\s+(.{8,80}?)(\d{2,5})(?:\.000)?\s*(?:EA|Nos|NO)\b/i);if(m3)cylinders.push({material_code:m3[1].toUpperCase(),cylinder_type:MATERIAL_MAP[m3[1].toUpperCase()]||clean(m3[2]),quantity:Math.round(+m3[3]||0),unit:'EA'})}
     return {sap_doc_no:normNo(sap),tt_number:normNo(tt),distributor_code:distCode,distributor_name:distName,delivery_number:delivery,sales_order_number:salesOrder,invoice_date:displayDate(invDate),invoice_date_iso:dateIso(invDate),invoice_time:time,cylinders:cylinders.filter(c=>c.material_code&&c.quantity),raw_qr_text_admin:raw};
   }
   function ervOcrParser(raw){
-    let text=String(raw||'').replace(/\r/g,'\n'), flat=clean(text);
+    let text=normalizeOcrText(raw), flat=clean(text);
     let sap=findAfter(flat,[/SAP\s*Document\s*No\.?\s*[:\-]?\s*(\d{6,12})/i,/Document\s*No\.?\s*[:\-]?\s*(\d{6,12})/i]);
     let challan=findAfter(flat,[/Delivery\s*Challan\s*#\s*([A-Z0-9\-\/]+)/i,/DELIVERY\s*CHALLAN\s*\(ERV\).*?#\s*([A-Z0-9\-\/]+)/i]);
     let ac4=findAfter(flat,[/AC4\s*No\.?\s*(\d{6,12})/i]);
-    let tt=findAfter(flat,[/Truck\s*No\.?\s*([A-Z]{2}\d{1,2}[A-Z]{1,3}\d{3,5})/i,/Truck\s*NO\.?\s*([A-Z0-9 -]{6,15})/i]);
+    let tt=findAfter(flat,[/Truck\s*No\.?\s*[:\-]?\s*([A-Z]{2}\s*\d{1,2}\s*[A-Z]{1,3}\s*\d{3,5})/i,/Vehicle\s*No\.?\s*[:\-]?\s*([A-Z]{2}\s*\d{1,2}\s*[A-Z]{1,3}\s*\d{3,5})/i,/Truck\s*NO\.?\s*([A-Z0-9 -]{6,15})/i]);
     let distCode=findAfter(flat,[/Distributor\s*Details\s*SAP\s*Code\s*0*(\d{5,8})/i,/\((0*\d{5,8})\)/i]);
     distCode=distCode.replace(/^0+(?=\d{5,8}$)/,'');
     let distName=findAfter(flat,[/Distributor\s*Name\s+(.+?)\s+SAP\s*Plant\s*Name/i,/^(.+?)\s*\(0*\d{5,8}\)/i]);
@@ -102,9 +118,25 @@
     if(e('qrHistoryTable'))qrHistoryTable.innerHTML='<tr><th>Scan Time</th><th>Status</th><th>SAP Doc</th><th>Distributor</th><th>TT No</th><th>Delivery</th><th>SO</th><th>Date</th><th>Cylinders</th><th>User/Gate</th><th>Action</th></tr>'+rows.map(r=>'<tr><td>'+esc(r.scan_time)+'</td><td><span class="qr-pill '+(r.scan_status==='OCR extracted'?'ocr':r.duplicate_of?'dup':'saved')+'">'+esc(r.scan_status)+'</span></td><td><b>'+esc(r.sap_doc_no)+'</b></td><td>'+esc([r.distributor_code,r.distributor_name].filter(Boolean).join(' - '))+'</td><td>'+esc(r.tt_number)+'</td><td>'+esc(r.delivery_number)+'</td><td>'+esc(r.sales_order_number)+'</td><td>'+esc(r.invoice_date)+'</td><td>'+esc((r.cylinders||[]).map(c=>c.material_code+': '+c.quantity+' '+c.unit).join('; '))+'</td><td>'+esc(r.scanned_by+' / '+r.gate_name)+'</td><td>'+(canQrCorrect()?'<button onclick="deleteInvoiceQr(&quot;'+esc(r.id)+'&quot;)">Delete</button>':'')+'</td></tr>').join('');
   }
   async function ensureScript(src){if([...document.scripts].some(s=>s.src.includes(src)))return;await new Promise((res,rej)=>{let s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s)})}
-  function canvasFromImage(img,max=1800){let r=Math.min(max/img.naturalWidth,max/img.naturalHeight,1),c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.naturalWidth*r));c.height=Math.max(1,Math.round(img.naturalHeight*r));c.getContext('2d').drawImage(img,0,0,c.width,c.height);return c}
+  function canvasFromImage(img,max=2800){let r=Math.min(max/img.naturalWidth,max/img.naturalHeight,1),c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.naturalWidth*r));c.height=Math.max(1,Math.round(img.naturalHeight*r));c.getContext('2d').drawImage(img,0,0,c.width,c.height);return c}
   function cropCanvas(src,rx,ry,rw,rh,scale=2){let c=document.createElement('canvas'),w=Math.max(1,Math.round(src.width*rw)),h=Math.max(1,Math.round(src.height*rh));c.width=w*scale;c.height=h*scale;let ctx=c.getContext('2d');ctx.imageSmoothingEnabled=false;ctx.drawImage(src,Math.round(src.width*rx),Math.round(src.height*ry),w,h,0,0,c.width,c.height);return c}
   function thresholdCanvas(src){let c=document.createElement('canvas');c.width=src.width;c.height=src.height;let ctx=c.getContext('2d');ctx.drawImage(src,0,0);let im=ctx.getImageData(0,0,c.width,c.height),d=im.data;for(let i=0;i<d.length;i+=4){let g=(d[i]*.299+d[i+1]*.587+d[i+2]*.114),v=g>142?255:0;d[i]=d[i+1]=d[i+2]=v}ctx.putImageData(im,0,0);return c}
+  function enhanceCanvas(src,mode='contrast'){
+    let c=document.createElement('canvas');c.width=src.width;c.height=src.height;let ctx=c.getContext('2d');ctx.drawImage(src,0,0);
+    let im=ctx.getImageData(0,0,c.width,c.height),d=im.data;
+    for(let i=0;i<d.length;i+=4){
+      let g=d[i]*.299+d[i+1]*.587+d[i+2]*.114;
+      if(mode==='contrast')g=Math.max(0,Math.min(255,(g-128)*1.55+128));
+      if(mode==='light')g=Math.max(0,Math.min(255,(g-115)*1.35+150));
+      if(mode==='binary')g=g>150?255:0;
+      d[i]=d[i+1]=d[i+2]=g;
+    }
+    ctx.putImageData(im,0,0);return c;
+  }
+  function upscaleCanvas(src,scale=1.5){
+    let c=document.createElement('canvas');c.width=Math.round(src.width*scale);c.height=Math.round(src.height*scale);
+    let ctx=c.getContext('2d');ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(src,0,0,c.width,c.height);return c;
+  }
   async function canvasToImage(c){return await new Promise((res,rej)=>{let img=new Image();img.onload=()=>res(img);img.onerror=rej;img.src=c.toDataURL('image/png')})}
   async function decodeCanvasZxing(src){
     try{
@@ -126,12 +158,42 @@
     return '';
   }
   async function imageFileToCanvas(f){let url=URL.createObjectURL(f);try{return await new Promise((res,rej)=>{let img=new Image();img.onload=()=>res(canvasFromImage(img));img.onerror=rej;img.src=url})}finally{setTimeout(()=>URL.revokeObjectURL(url),2000)}}
-  async function ocrCanvas(c,label='invoice image'){try{qrStatus('QR not decoded. Running OCR on '+label+'... keep this screen open.','qr-warn');await ensureScript('static/vendor/tesseract/tesseract.min.js');let r=await Tesseract.recognize(c.toDataURL('image/png'),'eng',{workerPath:'static/vendor/tesseract/worker.min.js',corePath:'static/vendor/tesseract/tesseract-core-simd.wasm.js',langPath:'static/vendor/tesseract',logger:m=>{if(m.status&&e('qrStatus'))qrStatus('OCR '+m.status+' '+Math.round((m.progress||0)*100)+'%','qr-warn')}});return r?.data?.text||''}catch(err){qrStatus('OCR could not read '+label+': '+esc(err.message||err)+'. Use clearer original PDF/image or Manual Entry.','qr-bad');return''}}
+  async function runTesseract(c,label='invoice image',psm='6'){
+    await ensureScript('static/vendor/tesseract/tesseract.min.js');
+    let r=await Tesseract.recognize(c.toDataURL('image/png'),'eng',{
+      workerPath:'static/vendor/tesseract/worker.min.js',
+      corePath:'static/vendor/tesseract/tesseract-core-simd.wasm.js',
+      langPath:'static/vendor/tesseract',
+      tessedit_pageseg_mode:psm,
+      preserve_interword_spaces:'1',
+      logger:m=>{if(m.status&&e('qrStatus'))qrStatus('OCR '+label+': '+m.status+' '+Math.round((m.progress||0)*100)+'%','qr-warn')}
+    });
+    return r?.data?.text||'';
+  }
+  async function ocrCanvas(c,label='invoice image',mode='invoice'){
+    try{
+      qrStatus('QR not decoded. Running OCR on '+label+'... keep this screen open.','qr-warn');
+      let variants=[['original',c,'6'],['contrast',enhanceCanvas(c,'contrast'),'6'],['light',enhanceCanvas(c,'light'),'6'],['binary',enhanceCanvas(c,'binary'),'6']];
+      if(c.width<1800)variants.push(['upscaled',upscaleCanvas(enhanceCanvas(c,'contrast'),1.8),'6']);
+      let top=cropCanvas(c,0,0,1,.72,2), bottom=cropCanvas(c,0,.58,1,.42,2);
+      variants.push(['top area',enhanceCanvas(top,'contrast'),'6'],['item table',enhanceCanvas(bottom,'contrast'),'6']);
+      let best='', bestScore=-1;
+      for(let [name,canvas,psm] of variants){
+        let txt=await runTesseract(canvas,name,psm);
+        let d=mode==='erv'?ervOcrParser(txt):invoiceQrParser(txt);
+        let score=(d.sap_doc_no?4:0)+(d.tt_number?3:0)+(d.distributor_code?2:0)+(d.distributor_name?2:0)+(d.cylinders||[]).length*4+(d.delivery_number?1:0)+(d.sales_order_number?1:0);
+        if(score>bestScore){bestScore=score;best=txt}
+        if(score>=12)break;
+      }
+      if(bestScore<4)qrStatus('OCR finished but fields are weak. Remedy: use original PDF or sharper full-page photo; otherwise do manual entry.','qr-warn');
+      return best;
+    }catch(err){qrStatus('OCR could not read '+label+': '+esc(err.message||err)+'. Use clearer original PDF/image or Manual Entry.','qr-bad');return''}
+  }
   async function textAndQrFromPdf(f){
     await ensureScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     let pdf=await pdfjsLib.getDocument({data:new Uint8Array(await f.arrayBuffer())}).promise,txt='',firstCanvas=null,qr='';
     for(let i=1;i<=pdf.numPages;i++){let page=await pdf.getPage(i),tc=await page.getTextContent();txt+=' '+tc.items.map(x=>x.str).join(' ');if(!qr){let vp=page.getViewport({scale:2.4}),c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;await page.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;if(!firstCanvas)firstCanvas=c;qr=await smartDecodeQrFromCanvas(c)}}
-    let d=invoiceQrParser(txt);if(!draftLooksUseful(d)&&firstCanvas)txt+=' '+await ocrCanvas(firstCanvas,'PDF page');
+    let d=qrOcrMode==='erv'?ervOcrParser(txt):invoiceQrParser(txt);if(!draftLooksUseful(d)&&firstCanvas)txt+=' '+await ocrCanvas(firstCanvas,'PDF page',qrOcrMode);
     return (qr?qr+' ':'')+txt;
   }
   async function openInvoiceQrScanner(){if(!canQrScan())return alert('Only Security Guard / Plant / S&D / Admin can scan invoice QR.');ensureInvoiceQrUi();e('invoiceQrModal')?.classList.remove('hide');if(e('qrConfirm'))qrConfirm.innerHTML=scannerHelp();qrStatus('Starting camera... allow camera permission on Android Chrome / Edge.','qr-warn');try{await ensureScript('static/vendor/html5-qrcode.min.js');qrScanner=new Html5Qrcode('qrReader');let found=false,miss=0;await qrScanner.start({facingMode:'environment'},{fps:10,qrbox:{width:280,height:280},aspectRatio:1.333},txt=>{found=true;stopInvoiceQrScanner();let d=invoiceQrParser(txt);if(draftLooksUseful(d)){showConfirm(d,'QR');qrStatus('Invoice QR read successfully. Verify extracted data and save.','qr-ok')}else{showConfirm({...blankDraft('QR'),raw_qr_text_admin:txt},'QR');qrStatus('Code was read, but invoice fields were not recognized. This may be GST/e-invoice QR only. Use Read Complete Invoice or correct manually.','qr-warn')}},err=>{miss++;if(miss===60&&!found)qrStatus('Still searching. Reason may be blur, low light, small QR/DataMatrix, or camera focus. Try moving phone slowly closer/farther, or use Read Complete Invoice below.','qr-warn')});setTimeout(()=>{if(!found&&e('invoiceQrModal')&&!e('invoiceQrModal').classList.contains('hide'))qrStatus('Unable to read camera QR so far. Remedy: improve light/focus and keep code inside box. If still not possible, use Read Complete Invoice / QR Image or Manual Entry below.','qr-bad')},22000);qrStatus('Camera ready. Point at IOCL Tax Invoice code. Upload/manual options are available below.','qr-ok')}catch(err){qrStatus('Camera failed or permission denied. Reason: '+esc(err.message||err)+'. Use Read Complete Invoice/PDF below or Manual Entry.','qr-bad');if(e('qrConfirm'))qrConfirm.innerHTML=scannerHelp()}}
@@ -143,7 +205,7 @@
     qrStatus('Reading '+(qrOcrMode==='erv'?'ERV / Delivery Challan':'complete invoice')+'. Trying document text, QR crop/upscale and OCR...','qr-warn');
     try{
       let name=f.name.toLowerCase(),txt='';
-      if(/\.(png|jpg|jpeg|webp)$/i.test(name)){let c=await imageFileToCanvas(f);txt=await smartDecodeQrFromCanvas(c);let d0=invoiceQrParser(txt);if(!draftLooksUseful(d0))txt+=' '+await ocrCanvas(c,'invoice image')}
+      if(/\.(png|jpg|jpeg|webp)$/i.test(name)){let c=await imageFileToCanvas(f);txt=await smartDecodeQrFromCanvas(c);let d0=qrOcrMode==='erv'?ervOcrParser(txt):invoiceQrParser(txt);if(!draftLooksUseful(d0))txt+=' '+await ocrCanvas(c,qrOcrMode==='erv'?'ERV image':'invoice image',qrOcrMode)}
       if(!txt&&/\.pdf$/i.test(name))txt=await textAndQrFromPdf(f);
       if(!txt)txt=await f.text().catch(()=> '');
       if(!txt)throw new Error('No QR/text could be read. The file may be a scanned image/PDF, blurred, or protected.');
