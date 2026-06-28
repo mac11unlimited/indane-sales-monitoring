@@ -50,7 +50,7 @@
   function blankDraft(source='Manual'){return{sap_doc_no:'',tt_number:'',distributor_code:'',distributor_name:'',delivery_number:'',sales_order_number:'',invoice_date:'',invoice_date_iso:todayKey(),invoice_time:'',cylinders:[{material_code:'M00087',cylinder_type:MATERIAL_MAP.M00087,quantity:0,unit:'EA'}],raw_qr_text_admin:'',source}}
   function draftLooksUseful(d){return !!(d&&(d.sap_doc_no||d.delivery_number||d.sales_order_number||d.tt_number||d.distributor_code||(d.cylinders||[]).some(c=>c.material_code&&c.quantity)))}
   function scannerHelp(){
-    return '<div class="qr-scan-tools no-print"><input id="qrModalFile" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.txt,.csv"><button onclick="scanInvoiceQrModalFile()">Upload Full Invoice / QR Image</button><button class="light" onclick="manualInvoiceQrEntry()">Manual Entry</button><button class="light" onclick="closeInvoiceQrScanner()">Close</button></div><div class="qr-remedy"><b>If camera cannot read:</b> clean lens, increase brightness, keep QR square inside box, avoid shaking, try 15-20 cm distance, or upload full text PDF invoice. If PDF/image is scanned photo and not text-readable, use Manual Entry.</div>';
+    return '<div class="qr-scan-tools no-print"><input id="qrModalFile" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.txt,.csv" capture="environment"><button onclick="scanInvoiceQrModalFile()">Read Complete Invoice / QR Image</button><button class="light" onclick="manualInvoiceQrEntry()">Manual Entry</button><button class="light" onclick="closeInvoiceQrScanner()">Close</button></div><div class="qr-remedy"><b>If camera cannot read:</b> the printed code may be too dense or may contain only GST/e-invoice data. Use <b>Read Complete Invoice</b>; the portal will crop/upscale QR and then OCR the full invoice. If the image/PDF is blurred or protected, use Manual Entry.</div>';
   }
   function showConfirm(draft,source='QR'){
     qrDraft={...draft,source};let dup=duplicateCheck(qrDraft), disabled=dup.duplicate?'disabled':'';
@@ -76,22 +76,44 @@
     if(e('qrHistoryTable'))qrHistoryTable.innerHTML='<tr><th>Scan Time</th><th>Status</th><th>SAP Doc</th><th>Distributor</th><th>TT No</th><th>Delivery</th><th>SO</th><th>Date</th><th>Cylinders</th><th>User/Gate</th><th>Action</th></tr>'+rows.map(r=>'<tr><td>'+esc(r.scan_time)+'</td><td><span class="qr-pill '+(r.scan_status==='OCR extracted'?'ocr':r.duplicate_of?'dup':'saved')+'">'+esc(r.scan_status)+'</span></td><td><b>'+esc(r.sap_doc_no)+'</b></td><td>'+esc([r.distributor_code,r.distributor_name].filter(Boolean).join(' - '))+'</td><td>'+esc(r.tt_number)+'</td><td>'+esc(r.delivery_number)+'</td><td>'+esc(r.sales_order_number)+'</td><td>'+esc(r.invoice_date)+'</td><td>'+esc((r.cylinders||[]).map(c=>c.material_code+': '+c.quantity+' '+c.unit).join('; '))+'</td><td>'+esc(r.scanned_by+' / '+r.gate_name)+'</td><td>'+(canQrCorrect()?'<button onclick="deleteInvoiceQr(&quot;'+esc(r.id)+'&quot;)">Delete</button>':'')+'</td></tr>').join('');
   }
   async function ensureScript(src){if([...document.scripts].some(s=>s.src.includes(src)))return;await new Promise((res,rej)=>{let s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s)})}
+  function canvasFromImage(img,max=1800){let r=Math.min(max/img.naturalWidth,max/img.naturalHeight,1),c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.naturalWidth*r));c.height=Math.max(1,Math.round(img.naturalHeight*r));c.getContext('2d').drawImage(img,0,0,c.width,c.height);return c}
+  function cropCanvas(src,rx,ry,rw,rh,scale=2){let c=document.createElement('canvas'),w=Math.max(1,Math.round(src.width*rw)),h=Math.max(1,Math.round(src.height*rh));c.width=w*scale;c.height=h*scale;let ctx=c.getContext('2d');ctx.imageSmoothingEnabled=false;ctx.drawImage(src,Math.round(src.width*rx),Math.round(src.height*ry),w,h,0,0,c.width,c.height);return c}
+  function thresholdCanvas(src){let c=document.createElement('canvas');c.width=src.width;c.height=src.height;let ctx=c.getContext('2d');ctx.drawImage(src,0,0);let im=ctx.getImageData(0,0,c.width,c.height),d=im.data;for(let i=0;i<d.length;i+=4){let g=(d[i]*.299+d[i+1]*.587+d[i+2]*.114),v=g>142?255:0;d[i]=d[i+1]=d[i+2]=v}ctx.putImageData(im,0,0);return c}
+  async function decodeCanvasQr(src){
+    try{if('BarcodeDetector'in window){let det=new BarcodeDetector({formats:['qr_code']});let r=await det.detect(src);if(r&&r[0]?.rawValue)return r[0].rawValue}}catch(_){}
+    try{await ensureScript('https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js');let ctx=src.getContext('2d'),im=ctx.getImageData(0,0,src.width,src.height),r=jsQR(im.data,src.width,src.height,{inversionAttempts:'attemptBoth'});if(r?.data)return r.data}catch(_){}
+    return '';
+  }
+  async function smartDecodeQrFromCanvas(base){
+    let regions=[[0,0,1,1],[.68,0,.32,.36],[.62,0,.38,.42],[.55,0,.45,.5],[.65,.02,.33,.33],[.5,0,.5,.55],[0,0,1,.55]];
+    for(let reg of regions){for(let sc of [1,2,3,4]){let c=cropCanvas(base,...reg,sc),txt=await decodeCanvasQr(c);if(txt)return txt;txt=await decodeCanvasQr(thresholdCanvas(c));if(txt)return txt}}
+    return '';
+  }
+  async function imageFileToCanvas(f){let url=URL.createObjectURL(f);try{return await new Promise((res,rej)=>{let img=new Image();img.onload=()=>res(canvasFromImage(img));img.onerror=rej;img.src=url})}finally{setTimeout(()=>URL.revokeObjectURL(url),2000)}}
+  async function ocrCanvas(c,label='invoice image'){try{qrStatus('QR not decoded. Running OCR on '+label+'... keep this screen open.','qr-warn');await ensureScript('https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js');let r=await Tesseract.recognize(c.toDataURL('image/png'),'eng',{logger:m=>{if(m.status&&e('qrStatus'))qrStatus('OCR '+m.status+' '+Math.round((m.progress||0)*100)+'%','qr-warn')}});return r?.data?.text||''}catch(err){qrStatus('OCR could not read '+label+': '+esc(err.message||err)+'. Use clearer original PDF/image or Manual Entry.','qr-bad');return''}}
+  async function textAndQrFromPdf(f){
+    await ensureScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    let pdf=await pdfjsLib.getDocument({data:new Uint8Array(await f.arrayBuffer())}).promise,txt='',firstCanvas=null,qr='';
+    for(let i=1;i<=pdf.numPages;i++){let page=await pdf.getPage(i),tc=await page.getTextContent();txt+=' '+tc.items.map(x=>x.str).join(' ');if(!qr){let vp=page.getViewport({scale:2.4}),c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;await page.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;if(!firstCanvas)firstCanvas=c;qr=await smartDecodeQrFromCanvas(c)}}
+    let d=invoiceQrParser(txt);if(!draftLooksUseful(d)&&firstCanvas)txt+=' '+await ocrCanvas(firstCanvas,'PDF page');
+    return (qr?qr+' ':'')+txt;
+  }
   async function openInvoiceQrScanner(){if(!canQrScan())return alert('Only Security Guard / Plant / S&D / Admin can scan invoice QR.');ensureInvoiceQrUi();e('invoiceQrModal')?.classList.remove('hide');if(e('qrConfirm'))qrConfirm.innerHTML=scannerHelp();qrStatus('Starting camera... allow camera permission on Android Chrome / Edge.','qr-warn');try{await ensureScript('https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js');qrScanner=new Html5Qrcode('qrReader');let found=false,miss=0;await qrScanner.start({facingMode:'environment'},{fps:10,qrbox:{width:280,height:280},aspectRatio:1.333},txt=>{found=true;stopInvoiceQrScanner();let d=invoiceQrParser(txt);if(draftLooksUseful(d)){showConfirm(d,'QR');qrStatus('Invoice QR read successfully. Verify extracted data and save.','qr-ok')}else{showConfirm({...blankDraft('QR'),raw_qr_text_admin:txt},'QR');qrStatus('QR was read, but invoice fields were not recognized. Please correct manually and save.','qr-warn')}},err=>{miss++;if(miss===60&&!found)qrStatus('Still searching. Reason may be blur, low light, small QR, non-standard barcode, or camera focus. Try moving phone slowly closer/farther, or upload full invoice below.','qr-warn')});setTimeout(()=>{if(!found&&e('invoiceQrModal')&&!e('invoiceQrModal').classList.contains('hide'))qrStatus('Unable to read camera QR so far. Remedy: improve light/focus and keep QR inside box. If still not possible, use Upload Full Invoice/PDF or Manual Entry below.','qr-bad')},22000);qrStatus('Camera ready. Point at IOCL Tax Invoice QR code. Upload/manual options are available below.','qr-ok')}catch(err){qrStatus('Camera failed or permission denied. Reason: '+esc(err.message||err)+'. Use Upload Full Invoice/PDF below or Manual Entry.','qr-bad');if(e('qrConfirm'))qrConfirm.innerHTML=scannerHelp()}}
   async function stopInvoiceQrScanner(){try{if(qrScanner)await qrScanner.stop()}catch(_){}try{qrScanner&&qrScanner.clear()}catch(_){}qrScanner=null}
   async function closeInvoiceQrScanner(){await stopInvoiceQrScanner();e('invoiceQrModal')?.classList.add('hide')}
   async function processInvoiceQrFile(f){
     if(!f)return alert('Select invoice image/PDF/text file first.');
-    qrStatus('Reading fallback file...','qr-warn');
+    qrStatus('Reading complete invoice. Trying QR crop/upscale first, then OCR if needed...','qr-warn');
     try{
       let name=f.name.toLowerCase(),txt='';
-      if(/\.(png|jpg|jpeg|webp)$/i.test(name)){await ensureScript('https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js');let inst=new Html5Qrcode('qrFileReader');txt=await inst.scanFile(f,true).catch(()=> '');try{inst.clear()}catch(_){}}
-      if(!txt&&/\.pdf$/i.test(name)){await ensureScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';let pdf=await pdfjsLib.getDocument({data:new Uint8Array(await f.arrayBuffer())}).promise;for(let i=1;i<=pdf.numPages;i++){let page=await pdf.getPage(i),tc=await page.getTextContent();txt+=' '+tc.items.map(x=>x.str).join(' ')}}
+      if(/\.(png|jpg|jpeg|webp)$/i.test(name)){let c=await imageFileToCanvas(f);txt=await smartDecodeQrFromCanvas(c);let d0=invoiceQrParser(txt);if(!draftLooksUseful(d0))txt+=' '+await ocrCanvas(c,'invoice image')}
+      if(!txt&&/\.pdf$/i.test(name))txt=await textAndQrFromPdf(f);
       if(!txt)txt=await f.text().catch(()=> '');
       if(!txt)throw new Error('No QR/text could be read. The file may be a scanned image/PDF, blurred, or protected.');
-      let d=invoiceQrParser(txt), src=/\.pdf$/i.test(name)?'Full Invoice PDF':'QR Image/Text';
+      let d=invoiceQrParser(txt), src=/\.pdf$/i.test(name)?'Complete Invoice PDF':(/\.(png|jpg|jpeg|webp)$/i.test(name)?'Complete Invoice Image/OCR':'QR Image/Text');
       if(draftLooksUseful(d)){showConfirm(d,src);qrStatus('Invoice file read successfully. Please confirm and save.','qr-ok')}
       else{showConfirm({...blankDraft(src),raw_qr_text_admin:txt},src);qrStatus('File was read, but required invoice fields were not confidently detected. Please correct manually and save.','qr-warn')}
-    }catch(err){qrStatus('Failed scan/retry: '+esc(err.message||err)+' Remedy: upload original text PDF invoice, clearer QR image, or use Manual Entry.','qr-bad');if(e('qrConfirm'))qrConfirm.innerHTML=scannerHelp()}
+    }catch(err){qrStatus('Failed scan/retry: '+esc(err.message||err)+' Remedy: upload original text PDF invoice, clearer full-page image, or use Manual Entry.','qr-bad');if(e('qrConfirm'))qrConfirm.innerHTML=scannerHelp()}
   }
   async function scanInvoiceQrFile(){return processInvoiceQrFile(e('qrFile')?.files?.[0])}
   async function scanInvoiceQrModalFile(){return processInvoiceQrFile(e('qrModalFile')?.files?.[0])}
