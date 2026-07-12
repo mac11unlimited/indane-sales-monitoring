@@ -1,6 +1,7 @@
 (function(){
   window.invoiceQrScans=JSON.parse(localStorage.indaneInvoiceQrScans||'[]');
-  let qrScanner=null, qrDraft=null, qrOcrMode='invoice';
+  let qrScanner=null, qrDraft=null, qrOcrMode='invoice', scanBridgeSeen=new Set(JSON.parse(localStorage.indaneScanBridgeSeen||'[]'));
+  const SCAN_BRIDGE_URL='http://127.0.0.1:8765';
   const MATERIAL_MAP={
     M00087:'14.2 kg NON SUB. DOM. H.HOLD CYLINDER',M00089:'14.2 kg N/S DOM.HH CYLINDER SM LOAD RETR',M00090:'14.2 kg N/S DOM. HH RET. CYLINDER SUB LD',
     M00002:'19 kg PACKED LPG CYLINDER',M00010:'19 kg DEFECTIVE SAME LOAD RETURN SBOM',M00011:'19 kg DEFECTIVE SUBSEQUENT LOAD RETURN',
@@ -123,6 +124,59 @@
   function scannerHelp(){
     let label=qrOcrMode==='erv'?'Read ERV / Delivery Challan':'Read Complete Invoice / QR Image';
     return '<div class="qr-scan-tools no-print"><input id="qrModalFile" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.txt,.csv" capture="environment"><button onclick="scanInvoiceQrModalFile()">'+label+'</button><button class="light" onclick="manualInvoiceQrEntry()">Manual Entry</button><button class="light" onclick="closeInvoiceQrScanner()">Close</button></div><div class="qr-remedy"><b>If camera cannot read:</b> the printed code may be too dense or may contain only GST/e-invoice data. Use <b>'+label+'</b>; the portal will OCR the visible document text. If the image/PDF is blurred or protected, use Manual Entry.</div>';
+  }
+  function saveBridgeSeen(){try{localStorage.indaneScanBridgeSeen=JSON.stringify([...scanBridgeSeen].slice(-200))}catch(_){}}
+  function bridgeDraftFromScan(scan){
+    let result=scan?.result||{};
+    let draft=draftFromBackendOcr(result,/ERV|DELIVERY_CHALLAN/i.test(result.document_type||'')?'erv':'invoice');
+    draft.scan_bridge_id=scan.id;
+    draft.scan_bridge_file=scan.source_file;
+    draft.source='HP ScanJet';
+    return draft;
+  }
+  async function markBridgeScan(id,action){
+    try{await fetch(SCAN_BRIDGE_URL+'/'+action,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})})}catch(_){}
+  }
+  function showScannerBridgePopup(scan){
+    if(!scan||!scan.id||scanBridgeSeen.has(scan.id))return;
+    scanBridgeSeen.add(scan.id);saveBridgeSeen();
+    let draft=bridgeDraftFromScan(scan);
+    ensureInvoiceQrUi();
+    e('invoiceQrModal')?.classList.remove('hide');
+    showConfirm(draft,'HP ScanJet');
+    qrStatus('<b>New document scanned from HP ScanJet.</b><br>File: '+esc((scan.source_file||'').split(/[\\\\/]/).pop())+'<br>Security guard must verify, then click <b>Accept Scan & Fill Gate Entry</b>.','qr-warn');
+    let host=e('qrConfirm');
+    if(host&&!e('scanBridgeDecision')){
+      host.insertAdjacentHTML('afterbegin','<div id="scanBridgeDecision" class="scan-bridge-decision"><button class="orange" onclick="acceptScannerBridgeScan()">Accept Scan & Fill Gate Entry</button><button class="light" onclick="rejectScannerBridgeScan()">Reject / Rescan</button></div>');
+    }
+  }
+  async function acceptScannerBridgeScan(){
+    let d=collectDraft();
+    await markBridgeScan(d.scan_bridge_id,'accept');
+    qrDraft={...d,source:'HP ScanJet Accepted'};
+    autoFillGateFromQr();
+    qrStatus('HP ScanJet document accepted and Gate-2 form filled. Verify fields and click Save Gate-2 Entry.','qr-ok');
+  }
+  async function rejectScannerBridgeScan(){
+    let d=collectDraft();
+    await markBridgeScan(d.scan_bridge_id,'reject');
+    qrStatus('Scan rejected. Please rescan the document or use manual entry.','qr-bad');
+    setTimeout(()=>closeInvoiceQrScanner(),900);
+  }
+  async function pollScannerBridge(){
+    if(!canQrScan())return;
+    try{
+      let r=await fetch(SCAN_BRIDGE_URL+'/next',{cache:'no-store'});
+      if(!r.ok)return;
+      let data=await r.json();
+      if(data.pending&&data.scan)showScannerBridgePopup(data.scan);
+    }catch(_){}
+  }
+  function startScannerBridgePolling(){
+    if(window.__scanBridgePolling)return;
+    window.__scanBridgePolling=true;
+    setInterval(pollScannerBridge,4000);
+    setTimeout(pollScannerBridge,1200);
   }
   function showConfirm(draft,source='QR'){
     qrDraft={...draft,source};let dup=duplicateCheck(qrDraft), disabled=dup.duplicate?'disabled':'';
@@ -297,6 +351,6 @@
     const oldShow=window.show;window.show=function(id){oldShow&&oldShow(id);if(id==='inventory'){ensureInvoiceQrUi();ensureGateOutQrButton();renderInvoiceQr()}};
     const oldAll=window.renderAll;window.renderAll=function(){oldAll&&oldAll();ensureInvoiceQrUi();ensureGateOutQrButton();renderInvoiceQr()};
   }
-  Object.assign(window,{invoiceQrParser,ervOcrParser,invoiceQrDuplicateCheck:duplicateCheck,prepareGateOutQrScan,prepareGateInErvScan,readGateInvoiceOcr,readGateErvOcr,handleGateOcrFile,openInvoiceQrScanner,closeInvoiceQrScanner,stopInvoiceQrScanner,scanInvoiceQrFile,scanInvoiceQrModalFile,manualInvoiceQrEntry,saveInvoiceQrScan,autoFillGateFromQr,renderInvoiceQr,deleteInvoiceQr,exportInvoiceQr});
-  installInvoiceQr();ensureInvoiceQrUi();ensureGateOutQrButton();renderInvoiceQr();
+  Object.assign(window,{invoiceQrParser,ervOcrParser,invoiceQrDuplicateCheck:duplicateCheck,prepareGateOutQrScan,prepareGateInErvScan,readGateInvoiceOcr,readGateErvOcr,handleGateOcrFile,openInvoiceQrScanner,closeInvoiceQrScanner,stopInvoiceQrScanner,scanInvoiceQrFile,scanInvoiceQrModalFile,manualInvoiceQrEntry,saveInvoiceQrScan,autoFillGateFromQr,renderInvoiceQr,deleteInvoiceQr,exportInvoiceQr,acceptScannerBridgeScan,rejectScannerBridgeScan,pollScannerBridge});
+  installInvoiceQr();ensureInvoiceQrUi();ensureGateOutQrButton();renderInvoiceQr();startScannerBridgePolling();
 })();

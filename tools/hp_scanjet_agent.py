@@ -23,15 +23,18 @@ Optional:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import mimetypes
 import os
 import sys
+import threading
 import time
 import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import asdict, dataclass
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 
@@ -48,6 +51,8 @@ class AgentConfig:
     output_folder: Path
     poll_seconds: float = 2.0
     stable_wait_seconds: float = 1.5
+    bridge_host: str = "127.0.0.1"
+    bridge_port: int = 8765
     processed_manifest: Path | None = None
 
     @classmethod
@@ -62,6 +67,8 @@ class AgentConfig:
             output_folder=output_folder,
             poll_seconds=float(os.getenv("SCAN_POLL_SECONDS", "2")),
             stable_wait_seconds=float(os.getenv("SCAN_STABLE_WAIT_SECONDS", "1.5")),
+            bridge_host=os.getenv("SCAN_BRIDGE_HOST", "127.0.0.1"),
+            bridge_port=int(os.getenv("SCAN_BRIDGE_PORT", "8765")),
             processed_manifest=output_folder / "processed-files.json",
         )
 
@@ -130,10 +137,13 @@ class ScanFolderAgent:
         self.config.output_folder.mkdir(parents=True, exist_ok=True)
         self.client = PortalClient(config.portal_base_url, config.username, config.password)
         self.processed = self._load_processed()
+        self.queue_path = self.config.output_folder / "scan-queue.json"
+        self.queue = self._load_queue()
 
     def run_forever(self) -> None:
         self._log(f"Watching {self.config.scan_folder}")
         self._log(f"Portal: {self.config.portal_base_url} | User: {self.config.username}")
+        self._start_bridge_server()
         while True:
             self.process_pending()
             time.sleep(self.config.poll_seconds)
@@ -162,6 +172,7 @@ class ScanFolderAgent:
             }
             out = self.config.output_folder / f"{path.stem}.ocr.json"
             out.write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
+            self._enqueue_scan(path, out, result)
             self.processed[self._file_key(path)] = {"file": str(path), "json": str(out), "at": time.time()}
             self._save_processed()
             status = result.get("status", "UNKNOWN")
@@ -186,6 +197,112 @@ class ScanFolderAgent:
         manifest = self.config.processed_manifest
         if not manifest or not manifest.exists():
             return {}
+
+    def _load_queue(self) -> list[dict[str, Any]]:
+        if not self.queue_path.exists():
+            return []
+        try:
+            data = json.loads(self.queue_path.read_text(encoding="utf-8"))
+            return data if isinstance(data, list) else []
+        except Exception:
+            return []
+
+    def _save_queue(self) -> None:
+        self.queue_path.write_text(json.dumps(self.queue[-200:], indent=2, ensure_ascii=False), encoding="utf-8")
+
+    def _enqueue_scan(self, source: Path, json_path: Path, result: dict[str, Any]) -> None:
+        scan_id = hashlib.sha1(f"{source.resolve()}|{source.stat().st_size}|{source.stat().st_mtime}".encode("utf-8")).hexdigest()[:16]
+        if any(row.get("id") == scan_id for row in self.queue):
+            return
+        self.queue.append(
+            {
+                "id": scan_id,
+                "status": "PENDING_SECURITY_ACCEPTANCE",
+                "source_file": str(source),
+                "json_file": str(json_path),
+                "created_at": time.strftime("%Y-%m-%d %H:%M:%S"),
+                "result": result,
+            }
+        )
+        self._save_queue()
+
+    def latest_pending(self) -> dict[str, Any] | None:
+        for row in reversed(self.queue):
+            if row.get("status") == "PENDING_SECURITY_ACCEPTANCE":
+                return row
+        return None
+
+    def mark_scan(self, scan_id: str, status: str) -> dict[str, Any]:
+        for row in self.queue:
+            if row.get("id") == scan_id:
+                row["status"] = status
+                row["updated_at"] = time.strftime("%Y-%m-%d %H:%M:%S")
+                self._save_queue()
+                return row
+        raise KeyError(scan_id)
+
+    def _start_bridge_server(self) -> None:
+        handler = self._handler_class()
+        server = ThreadingHTTPServer((self.config.bridge_host, self.config.bridge_port), handler)
+        thread = threading.Thread(target=server.serve_forever, name="scanjet-local-bridge", daemon=True)
+        thread.start()
+        self._log(f"Local scanner popup bridge: http://{self.config.bridge_host}:{self.config.bridge_port}")
+
+    def _handler_class(self) -> type[BaseHTTPRequestHandler]:
+        agent = self
+
+        class ScannerBridgeHandler(BaseHTTPRequestHandler):
+            def log_message(self, format: str, *args: Any) -> None:
+                return
+
+            def _send_json(self, payload: Any, status: int = 200) -> None:
+                body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+                self.send_response(status)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+                self.send_header("Access-Control-Allow-Headers", "Content-Type")
+                self.send_header("Cache-Control", "no-store")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+            def do_OPTIONS(self) -> None:
+                self._send_json({"ok": True})
+
+            def do_GET(self) -> None:
+                if self.path.startswith("/health"):
+                    self._send_json({"ok": True, "agent": "hp_scanjet_agent", "pending": len([q for q in agent.queue if q.get("status") == "PENDING_SECURITY_ACCEPTANCE"])})
+                    return
+                if self.path.startswith("/next"):
+                    row = agent.latest_pending()
+                    self._send_json({"pending": bool(row), "scan": row})
+                    return
+                if self.path.startswith("/queue"):
+                    self._send_json({"queue": agent.queue[-50:]})
+                    return
+                self._send_json({"error": "Not found"}, 404)
+
+            def do_POST(self) -> None:
+                length = int(self.headers.get("Content-Length") or 0)
+                payload = json.loads(self.rfile.read(length).decode("utf-8") or "{}") if length else {}
+                if self.path.startswith("/accept"):
+                    try:
+                        row = agent.mark_scan(str(payload.get("id", "")), "ACCEPTED_BY_SECURITY")
+                        self._send_json({"ok": True, "scan": row})
+                    except KeyError:
+                        self._send_json({"ok": False, "error": "Scan id not found"}, 404)
+                    return
+                if self.path.startswith("/reject"):
+                    try:
+                        row = agent.mark_scan(str(payload.get("id", "")), "REJECTED_BY_SECURITY")
+                        self._send_json({"ok": True, "scan": row})
+                    except KeyError:
+                        self._send_json({"ok": False, "error": "Scan id not found"}, 404)
+                    return
+                self._send_json({"error": "Not found"}, 404)
+
+        return ScannerBridgeHandler
         try:
             return json.loads(manifest.read_text(encoding="utf-8"))
         except Exception:
@@ -229,6 +346,8 @@ def main() -> int:
     parser.add_argument("--output-folder", type=Path, default=Path(os.getenv("SCAN_OUTPUT_FOLDER", "scanner-output")))
     parser.add_argument("--once", action="store_true", help="Process current folder files once and exit.")
     parser.add_argument("--scan-once", action="store_true", help="Use Windows WIA to scan one page before processing.")
+    parser.add_argument("--bridge-host", default=os.getenv("SCAN_BRIDGE_HOST", "127.0.0.1"))
+    parser.add_argument("--bridge-port", type=int, default=int(os.getenv("SCAN_BRIDGE_PORT", "8765")))
     args = parser.parse_args()
 
     config = AgentConfig(
@@ -237,6 +356,8 @@ def main() -> int:
         password=args.password,
         scan_folder=args.scan_folder.resolve(),
         output_folder=args.output_folder.resolve(),
+        bridge_host=args.bridge_host,
+        bridge_port=args.bridge_port,
         processed_manifest=args.output_folder.resolve() / "processed-files.json",
     )
     agent = ScanFolderAgent(config)
