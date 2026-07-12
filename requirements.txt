@@ -17,3 +17,4 @@ openai==1.93.0
 pdfplumber==0.11.7
 pdf2image==1.17.0
 Pillow==11.2.1
+pywin32==306; sys_platform == "win32"
